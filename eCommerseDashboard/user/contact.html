@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShopZone – Contact</title>
+  <link rel="stylesheet" href="../css/user.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo">🛍️ ShopZone</a>
+    <div class="navbar-search">
+      <input type="text" id="search-input" placeholder="Search products…" />
+    </div>
+    <ul class="navbar-menu" id="navbar-menu">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="electronics.html">Electronics</a></li>
+      <li>
+        <a href="cart.html" class="cart-link">
+          🛒 Cart
+          <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+        </a>
+      </li>
+      <li><a href="myorders.html">My Orders</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+      <li><span id="nav-username" style="color:rgba(255,255,255,0.7);padding:8px 6px;font-size:0.88rem"></span></li>
+      <li><a href="#" onclick="logoutUser()" style="color:#ffcdd2">Logout</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <div class="contact-section">
+    <div class="contact-card">
+      <h2>📬 Contact Us</h2>
+      <p>We'd love to hear from you. Reach out anytime!</p>
+
+      <div class="contact-info">
+        <div class="contact-info-item">
+          <span class="icon">📧</span>
+          <div>
+            <div class="label">Email</div>
+            <div class="value">support@shopzone.com</div>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <span class="icon">📞</span>
+          <div>
+            <div class="label">Phone</div>
+            <div class="value">+1 (800) 123-4567</div>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <span class="icon">📍</span>
+          <div>
+            <div class="label">Address</div>
+            <div class="value">123 Commerce St, New York, NY 10001</div>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <span class="icon">🕐</span>
+          <div>
+            <div class="label">Hours</div>
+            <div class="value">Mon–Fri: 9am – 6pm EST</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:18px;color:#333">Send a Message</h3>
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" id="contact-name" placeholder="John Doe" />
+      </div>
+      <div class="form-group" style="margin-top:14px">
+        <label>Email Address</label>
+        <input type="email" id="contact-email" placeholder="john@example.com" />
+      </div>
+      <div class="form-group" style="margin-top:14px">
+        <label>Message</label>
+        <textarea id="contact-msg" rows="4" placeholder="How can we help you?"></textarea>
+      </div>
+      <button class="btn-confirm" style="width:100%;margin-top:20px" id="send-btn">Send Message 📨</button>
+    </div>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script>
+    const _u = JSON.parse(localStorage.getItem('sz_current_user') || 'null');
+    if (!_u) { window.location.href = '../index.html'; }
+    else { const el = document.getElementById('nav-username'); if(el) el.textContent = '👤 ' + _u.name; }
+    function logoutUser() { localStorage.removeItem('sz_current_user'); window.location.href = '../index.html'; }
+
+    Store.updateCartBadge();
+
+    document.getElementById('send-btn').addEventListener('click', () => {
+      const name = document.getElementById('contact-name').value.trim();
+      const email = document.getElementById('contact-email').value.trim();
+      const msg = document.getElementById('contact-msg').value.trim();
+      if (!name || !email || !msg) {
+        showToast('Please fill in all fields', 'error');
+        return;
+      }
+      showToast('Message sent! We\'ll get back to you soon.', 'success');
+      document.getElementById('contact-name').value = '';
+      document.getElementById('contact-email').value = '';
+      document.getElementById('contact-msg').value = '';
+    });
+
+    document.getElementById('search-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const q = e.target.value.trim();
+        if (q) window.location.href = `products.html?search=${encodeURIComponent(q)}`;
+      }
+    });
+  </script>
+</body>
+</html>

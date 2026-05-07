@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <title>ShopZone Admin – Dashboard</title>
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body>
+
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">🛠 Admin Panel</div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="active"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="orders.html"><span class="nav-icon">🧾</span> Orders</a>
+      <a href="products.html"><span class="nav-icon">📦</span> Products</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="../index.html">← Back to Store</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="topbar">
+      <span class="topbar-title">Dashboard</span>
+      <div class="topbar-right">
+        <span class="admin-badge">🛠 Admin</span>
+        <a href="#" onclick="logoutAdmin()" style="font-size:0.85rem;color:#ff4757;font-weight:600;text-decoration:none;padding:6px 12px;background:#fff0f0;border-radius:8px">Logout</a>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="page-header">
+        <h1>Welcome back, Admin 👋</h1>
+        <p>Here's what's happening in your store today</p>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon purple">🧾</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-orders">0</div>
+            <div class="stat-label">Total Orders</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">💰</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-revenue">$0</div>
+            <div class="stat-label">Total Revenue</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">📦</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-products">0</div>
+            <div class="stat-label">Admin Products</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon pink">👤</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-customers">0</div>
+            <div class="stat-label">Customers</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT ORDERS -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Recent Orders</h2>
+          <a href="orders.html" class="btn btn-primary btn-sm">View All</a>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table id="recent-orders-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="recent-orders-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/store.js"></script>
+<script>
+  // Admin session guard
+  if (!localStorage.getItem('sz_admin_session')) { window.location.href = '../index.html'; }
+  function logoutAdmin() {
+    localStorage.removeItem('sz_admin_session');
+    window.location.href = '../index.html';
+  }
+
+  function loadDashboard() {
+    const orders = Store.getOrders();
+    const adminProducts = Store.getAdminProducts();
+
+    // Total Orders" number
+    document.getElementById('stat-orders').textContent = orders.length;
+    const revenue = orders.reduce((s, o) => s + parseFloat(o.total || 0), 0);
+    document.getElementById('stat-revenue').textContent = '$' + revenue.toFixed(2);
+    document.getElementById('stat-products').textContent = adminProducts.length;
+    const uniqueCustomers = new Set(orders.map(o => o.userEmail || o.customer?.phone)).size;
+    document.getElementById('stat-customers').textContent = uniqueCustomers;
+
+    const tbody = document.getElementById('recent-orders-body');
+    const recent = orders.slice(0, 5);
+    if (recent.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#aaa;padding:30px">No orders yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = recent.map(o => `
+      <tr>
+        <td><strong>${o.id}</strong></td>
+        <td>${o.customer?.name || '—'}</td>
+        <td>${o.items?.length || 0} item(s)</td>
+        <td><strong>$${parseFloat(o.total).toFixed(2)}</strong></td>
+        <td style="color:#888;font-size:0.85rem">${o.date}</td>
+        <td>${statusBadge(o.status)}</td>
+      </tr>
+    `).join('');
+  }
+
+  loadDashboard();
+</script>
+</body>
+</html>

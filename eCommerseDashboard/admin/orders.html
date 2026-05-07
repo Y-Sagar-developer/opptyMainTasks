@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <title>ShopZone Admin – Orders</title>
+  <link rel="stylesheet" href="../css/admin.css" />
+  <style>
+    .status-select {
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: 1.5px solid #ddd;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .status-select:focus { border-color: #667eea; }
+    .status-select.s-pending    { background:#fff8e6; color:#e67e00; border-color:#ffe0a0; }
+    .status-select.s-processing { background:#e8f0ff; color:#667eea; border-color:#c0d0ff; }
+    .status-select.s-completed  { background:#e8f8f0; color:#2ed573; border-color:#a0e8c0; }
+    .status-select.s-cancelled  { background:#fff0f0; color:#ff4757; border-color:#ffc0c0; }
+  </style>
+</head>
+<body>
+
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">🛠 Admin Panel</div>
+    <nav class="sidebar-nav">
+      <a href="index.html"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="orders.html" class="active"><span class="nav-icon">🧾</span> Orders</a>
+      <a href="products.html"><span class="nav-icon">📦</span> Products</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="../index.html">← Back to Store</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="topbar">
+      <span class="topbar-title">Orders</span>
+      <div class="topbar-right">
+        <span class="admin-badge">🛠 Admin</span>
+        <a href="#" onclick="logoutAdmin()" style="font-size:0.85rem;color:#ff4757;font-weight:600;text-decoration:none;padding:6px 12px;background:#fff0f0;border-radius:8px">Logout</a>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="page-header">
+        <h1>🧾 All Orders</h1>
+        <p>Manage customer orders and update their status</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>All Orders</h2>
+        </div>
+
+        <div class="card-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="orders-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER DETAIL MODAL -->
+<div class="modal-overlay hidden" id="order-modal">
+  <div class="modal">
+    <h2>📦 Order Details</h2>
+    <div id="order-detail-content"></div>
+    <div style="margin-top:24px;display:flex;gap:12px">
+      <button class="btn btn-primary" id="close-order-modal">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/store.js"></script>
+<script>
+  if (!localStorage.getItem('sz_admin_session')) { window.location.href = '../index.html'; }
+  function logoutAdmin() { localStorage.removeItem('sz_admin_session'); window.location.href = '../index.html'; }
+
+  let allOrders = [];
+
+  // ===== RENDER TABLE =====
+  function renderOrders() {
+    const orders = allOrders;
+
+    const tbody = document.getElementById('orders-body');
+    if (orders.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">🧾</div><p>No orders found</p></div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = orders.map(o => {
+      const sc = o.status === 'Pending' ? 's-pending' :
+                 o.status === 'Processing' ? 's-processing' :
+                 o.status === 'Completed'  ? 's-completed'  : 's-cancelled';
+      return `
+        <tr>
+          <td><strong>${o.id}</strong></td>
+          <td>${o.customer?.name || '—'}</td>
+          <td style="font-size:0.82rem;color:#888">${o.userEmail || '—'}</td>
+          <td>${o.customer?.phone || '—'}</td>
+          <td>${o.items?.length || 0} item(s)</td>
+          <td><strong>$${parseFloat(o.total).toFixed(2)}</strong></td>
+          <td style="color:#888;font-size:0.82rem;white-space:nowrap">${o.date}</td>
+          <td>
+            <select class="status-select ${sc}" onchange="changeStatus('${o.id}', this)">
+              <option ${o.status==='Pending'    ? 'selected':''}>Pending</option>
+              <option ${o.status==='Processing' ? 'selected':''}>Processing</option>
+              <option ${o.status==='Completed'  ? 'selected':''}>Completed</option>
+              <option ${o.status==='Cancelled'  ? 'selected':''}>Cancelled</option>
+            </select>
+          </td>
+          <td>
+            <button class="btn btn-primary btn-sm" onclick="viewOrder('${o.id}')">👁 View</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // ===== CHANGE STATUS =====
+  function changeStatus(id, selectEl) {
+    const newStatus = selectEl.value;
+    Store.updateOrderStatus(id, newStatus);
+    const order = allOrders.find(o => o.id === id);
+    if (order) order.status = newStatus;
+    selectEl.className = 'status-select ' +
+      (newStatus === 'Pending'    ? 's-pending'    :
+       newStatus === 'Processing' ? 's-processing' :
+       newStatus === 'Completed'  ? 's-completed'  : 's-cancelled');
+    showToast('Status updated to ' + newStatus, 'success');
+  }
+
+  // ===== VIEW ORDER =====
+  function viewOrder(id) {
+    const order = allOrders.find(o => o.id === id);
+    if (!order) return;
+    document.getElementById('order-detail-content').innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
+        <div style="background:#f9f9f9;border-radius:10px;padding:12px">
+          <div style="font-size:0.75rem;color:#888;margin-bottom:3px">ORDER ID</div>
+          <div style="font-weight:700">${order.id}</div>
+        </div>
+        <div style="background:#f9f9f9;border-radius:10px;padding:12px">
+          <div style="font-size:0.75rem;color:#888;margin-bottom:3px">STATUS</div>
+          <div>${statusBadge(order.status)}</div>
+        </div>
+        <div style="background:#f9f9f9;border-radius:10px;padding:12px">
+          <div style="font-size:0.75rem;color:#888;margin-bottom:3px">CUSTOMER</div>
+          <div style="font-weight:700">${order.customer?.name}</div>
+        </div>
+        <div style="background:#f9f9f9;border-radius:10px;padding:12px">
+          <div style="font-size:0.75rem;color:#888;margin-bottom:3px">PHONE</div>
+          <div style="font-weight:600">${order.customer?.phone}</div>
+        </div>
+        <div style="background:#f9f9f9;border-radius:10px;padding:12px">
+          <div style="font-size:0.75rem;color:#888;margin-bottom:3px">EMAIL</div>
+          <div style="font-weight:600;font-size:0.88rem">${order.userEmail || '—'}</div>
+        </div>
+        <div style="background:#f9f9f9;border-radius:10px;padding:12px">
+          <div style="font-size:0.75rem;color:#888;margin-bottom:3px">DATE</div>
+          <div style="font-weight:600;font-size:0.88rem">${order.date}</div>
+        </div>
+        <div style="background:#f9f9f9;border-radius:10px;padding:12px;grid-column:1/-1">
+          <div style="font-size:0.75rem;color:#888;margin-bottom:3px">ADDRESS</div>
+          <div style="font-weight:600">${order.customer?.address}</div>
+        </div>
+      </div>
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:12px">🛒 Purchased Products</h3>
+      <div class="order-products">
+        ${(order.items || []).map(item => `
+          <div class="order-product-item">
+            <img src="${item.image}" alt="${item.title}" />
+            <div class="op-title">${item.title}</div>
+            <div style="font-size:0.82rem;color:#888">×${item.qty}</div>
+            <div class="op-price">$${(item.price * item.qty).toFixed(2)}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:2px solid #f0f0f0;font-size:1.1rem;font-weight:700">
+        <span>Total</span>
+        <span style="color:#667eea">$${parseFloat(order.total).toFixed(2)}</span>
+      </div>
+    `;
+    document.getElementById('order-modal').classList.remove('hidden');
+  }
+
+  // ===== CLOSE MODAL =====
+  document.getElementById('close-order-modal').addEventListener('click', () => {
+    document.getElementById('order-modal').classList.add('hidden');
+  });
+
+  // ===== LOAD =====
+  function loadOrders() {
+    allOrders = Store.getOrders();
+    renderOrders();
+  }
+
+  loadOrders();
+</script>
+</body>
+</html>

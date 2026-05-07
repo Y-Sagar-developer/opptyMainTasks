@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <title>ShopZone – Cart</title>
+  <link rel="stylesheet" href="../css/user.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo">🛍️ ShopZone</a>
+    <div class="navbar-search">
+      <input type="text" id="search-input" placeholder="Search products…" />
+    </div>
+    <ul class="navbar-menu" id="navbar-menu">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="electronics.html">Electronics</a></li>
+      <li>
+        <a href="cart.html" class="cart-link active">
+          🛒 Cart
+          <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+        </a>
+      </li>
+      <li><a href="myorders.html">My Orders</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><span id="nav-username" style="color:rgba(255,255,255,0.7);padding:8px 6px;font-size:0.88rem"></span></li>
+      <li><a href="#" onclick="logoutUser()" style="color:#ffcdd2">Logout</a></li>
+    </ul>
+
+  </nav>
+
+  <!-- CART CONTENT -->
+  <div class="cart-container">
+    <h1 class="cart-title">🛒 Your Cart</h1>
+    <div id="cart-items"></div>
+    <div id="cart-summary"></div>
+  </div>
+
+  <!-- BUY MODAL -->
+  <div class="modal-overlay hidden" id="buy-modal">
+    <div class="modal">
+      <h2>📦 Complete Your Order</h2>
+      <div class="form-group">
+        <label for="buyer-name">Full Name *</label>
+        <input type="text" id="buyer-name" placeholder="John Doe" />
+      </div>
+      <div class="form-group">
+        <label for="buyer-address">Delivery Address *</label>
+        <textarea id="buyer-address" rows="3" placeholder="123 Main St, City, Country"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="buyer-phone">Phone Number *</label>
+        <input type="tel" id="buyer-phone" placeholder="+1 234 567 8900" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancel-buy">Cancel</button>
+        <button class="btn-confirm" id="confirm-buy">Place Order ✅</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS OVERLAY -->
+  <div class="success-overlay hidden" id="success-overlay">
+    <div class="success-box">
+      <div class="success-icon">✅</div>
+      <h2>Order Placed Successfully!</h2>
+      <p id="success-msg">Your order has been received and is being processed.</p>
+      <button class="btn-continue" id="continue-shopping">Continue Shopping</button>
+    </div>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script>
+    const _u = JSON.parse(localStorage.getItem('sz_current_user') || 'null');
+    if (!_u) { window.location.href = '../index.html'; }
+    else { const el = document.getElementById('nav-username'); if(el) el.textContent = '👤 ' + _u.name; }
+    function logoutUser() { localStorage.removeItem('sz_current_user'); window.location.href = '../index.html'; }
+
+    Store.updateCartBadge();
+
+    function renderCart() {
+      const cart = Store.getCart();
+      const itemsEl = document.getElementById('cart-items');
+      const summaryEl = document.getElementById('cart-summary');
+
+      if (cart.length === 0) {
+        itemsEl.innerHTML = `
+          <div class="cart-empty">
+            <div class="empty-icon">🛒</div>
+            <p>Your cart is empty</p>
+            <a href="products.html" style="display:inline-block;background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:12px 28px;border-radius:10px;text-decoration:none;font-weight:600">Browse Products</a>
+          </div>`;
+        summaryEl.innerHTML = '';
+        return;
+      }
+
+      itemsEl.innerHTML = '';
+      cart.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'cart-item';
+        el.innerHTML = `
+          <img class="cart-item-img" src="${item.image}" alt="${item.title}" />
+          <div class="cart-item-info">
+            <div class="cart-item-title">${item.title}</div>
+            <div class="cart-item-price">$${parseFloat(item.price).toFixed(2)} each</div>
+            <div class="cart-item-controls">
+              <button class="qty-btn" data-action="dec" data-id="${item.id}">−</button>
+              <span class="qty-value">${item.qty}</span>
+              <button class="qty-btn" data-action="inc" data-id="${item.id}">+</button>
+              <span style="color:#888;font-size:0.85rem">= $${(item.price * item.qty).toFixed(2)}</span>
+            </div>
+          </div>
+          <button class="cart-item-remove" data-id="${item.id}" title="Remove">🗑️</button>
+        `;
+        itemsEl.appendChild(el);
+      });
+
+      const total = Store.getCartTotal();
+      const shipping = total > 50 ? 0 : 4.99;
+      summaryEl.innerHTML = `
+        <div class="cart-summary">
+          <div class="cart-summary-row"><span>Subtotal</span><span>$${total.toFixed(2)}</span></div>
+          <div class="cart-summary-row"><span>Shipping</span><span>${shipping === 0 ? '<span style="color:#2ed573">FREE</span>' : '$' + shipping.toFixed(2)}</span></div>
+          <div class="cart-summary-total"><span>Total</span><span>$${(total + shipping).toFixed(2)}</span></div>
+          <button class="btn-buy" id="buy-now-btn">Buy Now 🚀</button>
+        </div>`;
+
+      document.getElementById('buy-now-btn').addEventListener('click', () => {
+        document.getElementById('buy-modal').classList.remove('hidden');
+      });
+
+      // Qty controls
+      itemsEl.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const item = Store.getCart().find(i => String(i.id) === String(id));
+          if (!item) return;
+          const newQty = btn.dataset.action === 'inc' ? item.qty + 1 : item.qty - 1;
+          Store.updateQty(id, newQty);
+          renderCart();
+        });
+      });
+
+      // Remove
+      itemsEl.querySelectorAll('.cart-item-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+          Store.removeFromCart(btn.dataset.id);
+          renderCart();
+          showToast('Item removed', 'error');
+        });
+      });
+    }
+
+    // Modal controls
+    document.getElementById('cancel-buy').addEventListener('click', () => {
+      document.getElementById('buy-modal').classList.add('hidden');
+    });
+
+    document.getElementById('confirm-buy').addEventListener('click', () => {
+      const name = document.getElementById('buyer-name').value.trim();
+      const address = document.getElementById('buyer-address').value.trim();
+      const phone = document.getElementById('buyer-phone').value.trim();
+
+      if (!name || !address || !phone) {
+        showToast('Please fill in all fields', 'error');
+        return;
+      }
+
+      const cart = Store.getCart();
+      const orderId = Store.saveOrder({
+        userEmail: _u.email,
+        userName:  _u.name,
+        customer: { name, address, phone },
+        items: cart,
+        total: (Store.getCartTotal() + (Store.getCartTotal() > 50 ? 0 : 4.99)).toFixed(2)
+      });
+
+      Store.clearCart();
+      document.getElementById('buy-modal').classList.add('hidden');
+      document.getElementById('success-msg').textContent = `Order ${orderId} placed! Thank you, ${name}!`;
+      document.getElementById('success-overlay').classList.remove('hidden');
+      renderCart();
+    });
+
+    document.getElementById('continue-shopping').addEventListener('click', () => {
+      window.location.href = 'products.html';
+    });
+
+    document.getElementById('search-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const q = e.target.value.trim();
+        if (q) window.location.href = `products.html?search=${encodeURIComponent(q)}`;
+      }
+    });
+
+    renderCart();
+  </script>
+</body>
+</html>

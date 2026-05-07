@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <title>ShopZone – Home</title>
+  <link rel="stylesheet" href="../css/user.css" />
+</head>
+<body>                                                        
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo">🛍️ ShopZone</a>
+    <div class="navbar-search">
+      <input type="text" id="search-input" placeholder="Search products…" />
+    </div>
+    <ul class="navbar-menu" id="navbar-menu">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="electronics.html">Electronics</a></li>
+      <li>
+        <a href="cart.html" class="cart-link">
+          🛒 Cart
+          <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+        </a>
+      </li>
+      <li><a href="myorders.html">My Orders</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><span id="nav-username" style="color:rgba(255,255,255,0.7);padding:8px 6px;font-size:0.88rem"></span></li>
+      <li><a href="#" onclick="logoutUser()" style="color:#ffcdd2">Logout</a></li>
+    </ul>
+
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Shop the Best Deals 🎉</h1>
+    <p>Discover thousands of products at unbeatable prices</p>
+    <a href="products.html" class="hero-btn">Shop Now →</a>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <div class="section">
+    <h2 class="section-title">Featured Products</h2>
+    <p class="section-subtitle">Hand-picked just for you</p>
+    <div id="featured-grid" class="product-grid">
+      <div class="loading"><div class="spinner"></div><p>Loading products…</p></div>
+    </div>
+  </div>
+
+  <!-- CATEGORIES BANNER -->
+  <div class="section" style="padding-top:0">
+    <h2 class="section-title">Shop by Category</h2>
+    <p class="section-subtitle">Find exactly what you're looking for</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-top:8px">
+      <a href="electronics.html" style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;border-radius:14px;padding:24px;text-align:center;text-decoration:none;font-weight:700;font-size:1rem;transition:transform 0.2s" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">⚡ Electronics</a>
+      <a href="products.html?cat=jewelery" style="background:linear-gradient(135deg,#f093fb,#f5576c);color:white;border-radius:14px;padding:24px;text-align:center;text-decoration:none;font-weight:700;font-size:1rem;transition:transform 0.2s" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">💍 Jewelery</a>
+      <a href="products.html?cat=men's clothing" style="background:linear-gradient(135deg,#4facfe,#00f2fe);color:white;border-radius:14px;padding:24px;text-align:center;text-decoration:none;font-weight:700;font-size:1rem;transition:transform 0.2s" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">👔 Men's</a>
+      <a href="products.html?cat=women's clothing" style="background:linear-gradient(135deg,#fda085,#f6d365);color:white;border-radius:14px;padding:24px;text-align:center;text-decoration:none;font-weight:700;font-size:1rem;transition:transform 0.2s" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">👗 Women's</a>
+    </div>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script>
+    // Session guard
+    const _u = JSON.parse(localStorage.getItem('sz_current_user') || 'null');
+    if (!_u) { window.location.href = '../index.html'; }
+    else { const el = document.getElementById('nav-username'); if(el) el.textContent = '👤 ' + _u.name; }
+    function logoutUser() {
+      localStorage.removeItem('sz_current_user');
+      window.location.href = '../index.html';
+    }
+
+    Store.updateCartBadge();
+
+    // Search redirect
+    document.getElementById('search-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const q = e.target.value.trim();
+        if (q) window.location.href = `products.html?search=${encodeURIComponent(q)}`;
+      }
+    });
+
+    // Load featured (limit 8)
+    async function loadFeatured() {
+      try {
+        const res = await fetch('https://fakestoreapi.com/products?limit=8');
+        const products = await res.json();
+        const adminProducts = Store.getAdminProducts().slice(0, 2);
+        const all = [...adminProducts, ...products].slice(0, 8);
+        const grid = document.getElementById('featured-grid');
+        grid.innerHTML = '';
+        all.forEach(p => grid.appendChild(buildProductCard(p)));
+      } catch (e) {
+        document.getElementById('featured-grid').innerHTML = '<p style="color:#888">Failed to load products. Please check your connection.</p>';
+      }
+    }
+    loadFeatured();
+  </script>
+</body>
+</html>

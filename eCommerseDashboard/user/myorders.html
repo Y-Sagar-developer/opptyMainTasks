@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShopZone – My Orders</title>
+  <link rel="stylesheet" href="../css/user.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo">🛍️ ShopZone</a>
+    <div class="navbar-search">
+      <input type="text" id="search-input" placeholder="Search products…" />
+    </div>
+    <ul class="navbar-menu" id="navbar-menu">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="electronics.html">Electronics</a></li>
+      <li>
+        <a href="cart.html" class="cart-link">
+          🛒 Cart
+          <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+        </a>
+      </li>
+      <li><a href="myorders.html" class="active">My Orders</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><span id="nav-username" style="color:rgba(255,255,255,0.7);padding:8px 6px;font-size:0.88rem"></span></li>
+      <li><a href="#" onclick="logoutUser()" style="color:#ffcdd2">Logout</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <div class="orders-page">
+    <h1 style="font-size:1.8rem;font-weight:800;margin-bottom:6px;color:#333">📦 My Orders</h1>
+    <p style="color:#888;margin-bottom:28px">Track all your purchases and their status</p>
+    <div id="orders-list"></div>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script>
+    // Session guard
+    const _u = JSON.parse(localStorage.getItem('sz_current_user') || 'null');
+    if (!_u) { window.location.href = '../index.html'; }
+    else { const el = document.getElementById('nav-username'); if(el) el.textContent = '👤 ' + _u.name; }
+    function logoutUser() { localStorage.removeItem('sz_current_user'); window.location.href = '../index.html'; }
+
+    Store.updateCartBadge();
+
+    document.getElementById('search-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const q = e.target.value.trim();
+        if (q) window.location.href = `products.html?search=${encodeURIComponent(q)}`;
+      }
+    });
+
+    function renderOrders() {
+      const orders = Store.getOrdersByUser(_u.email);
+      const container = document.getElementById('orders-list');
+
+      if (orders.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:60px 20px;color:#aaa">
+            <div style="font-size:4rem;margin-bottom:16px">📭</div>
+            <p style="font-size:1.1rem;margin-bottom:20px">You haven't placed any orders yet</p>
+            <a href="products.html" style="display:inline-block;background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:12px 28px;border-radius:10px;text-decoration:none;font-weight:600">Start Shopping</a>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      orders.forEach(order => {
+        const card = document.createElement('div');
+        card.className = 'order-card';
+        card.innerHTML = `
+          <div class="order-card-header">
+            <div>
+              <div class="order-card-id">🧾 ${order.id}</div>
+              <div class="order-card-date">${order.date}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              ${statusBadge(order.status)}
+              <span style="font-weight:700;color:#667eea">$${parseFloat(order.total).toFixed(2)}</span>
+            </div>
+          </div>
+          <div class="order-card-body">
+            <div style="font-size:0.82rem;color:#888;margin-bottom:10px">
+              📍 ${order.customer?.address} &nbsp;|&nbsp; 📞 ${order.customer?.phone}
+            </div>
+            ${(order.items || []).map(item => `
+              <div class="order-item-row">
+                <img src="${item.image}" alt="${item.title}" />
+                <div class="order-item-title">${item.title}</div>
+                <div class="order-item-qty">×${item.qty}</div>
+                <div class="order-item-price">$${(item.price * item.qty).toFixed(2)}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="order-card-footer">
+            <div class="order-total">Total: $${parseFloat(order.total).toFixed(2)}</div>
+            <div style="font-size:0.82rem;color:#aaa">
+              ${order.status === 'Completed' ? '✅ Delivered' :
+                order.status === 'Processing' ? '🚚 On the way' :
+                order.status === 'Cancelled'  ? '❌ Cancelled' :
+                '⏳ Awaiting confirmation'}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Poll every 5 seconds so status updates from admin reflect live
+    renderOrders();
+    setInterval(renderOrders, 5000);
+  </script>
+</body>
+</html>

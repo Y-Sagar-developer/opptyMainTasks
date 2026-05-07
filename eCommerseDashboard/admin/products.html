@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <title>ShopZone Admin – Products</title>
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body>
+
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">🛠 Admin Panel</div>
+    <nav class="sidebar-nav">
+      <a href="index.html"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="orders.html"><span class="nav-icon">🧾</span> Orders</a>
+      <a href="products.html" class="active"><span class="nav-icon">📦</span> Products</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="../index.html">← Back to Store</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="topbar">
+      <span class="topbar-title">Product Management</span>
+      <div class="topbar-right">
+        <span class="admin-badge">🛠 Admin</span>
+        <a href="#" onclick="logoutAdmin()" style="font-size:0.85rem;color:#ff4757;font-weight:600;text-decoration:none;padding:6px 12px;background:#fff0f0;border-radius:8px">Logout</a>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="page-header">
+        <h1>📦 Product Management</h1>
+        <p>Add, edit, and delete your store products</p>
+      </div>
+
+      <!-- ADD PRODUCT FORM -->
+      <div class="card">
+        <div class="card-header">
+          <h2 id="form-title">➕ Add New Product</h2>
+        </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Product Title *</label>
+              <input type="text" id="p-title" placeholder="e.g. Wireless Headphones" />
+            </div>
+            <div class="form-group">
+              <label>Price ($) *</label>
+              <input type="number" id="p-price" placeholder="e.g. 29.99" min="0" step="0.01" />
+            </div>
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="p-category">
+                <option value="">Select category</option>
+                <option value="electronics">Electronics</option>
+                <option value="jewelery">Jewelery</option>
+                <option value="men's clothing">Men's Clothing</option>
+                <option value="women's clothing">Women's Clothing</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Image URL</label>
+              <input type="url" id="p-image" placeholder="https://example.com/image.jpg" />
+            </div>
+            <div class="form-group full">
+              <label>Description</label>
+              <textarea id="p-desc" rows="3" placeholder="Product description…"></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" id="save-product-btn">➕ Add Product</button>
+            <button class="btn" style="background:#f0f0f0;color:#555" id="cancel-edit-btn" style="display:none">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUCT LIST -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Admin Products</h2>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="products-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- API PRODUCTS PREVIEW -->
+      <div class="card">
+        <div class="card-header">
+          <h2>FakeStore API Products (Read-only)</h2>
+          <span style="font-size:0.82rem;color:#888">Fetched from FakeStoreAPI</span>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody id="api-products-body">
+                <tr><td colspan="4" style="text-align:center;color:#aaa;padding:20px">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay hidden" id="delete-modal">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <div style="font-size:3rem;margin-bottom:16px">🗑️</div>
+    <h2>Delete Product?</h2>
+    <p style="color:#888;margin-bottom:24px">This action cannot be undone.</p>
+    <div style="display:flex;gap:12px">
+      <button class="btn" style="flex:1;background:#f0f0f0;color:#555" id="cancel-delete">Cancel</button>
+      <button class="btn btn-danger" style="flex:1" id="confirm-delete">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/store.js"></script>
+<script>
+  if (!localStorage.getItem('sz_admin_session')) { window.location.href = '../index.html'; }
+  function logoutAdmin() { localStorage.removeItem('sz_admin_session'); window.location.href = '../index.html'; }
+
+  let editingId = null;
+  let deleteTargetId = null;
+
+  function renderAdminProducts(products) {
+    const tbody = document.getElementById('products-body');
+    if (products.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📦</div><p>No admin products yet. Add one above!</p></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = products.map(p => `
+      <tr>
+        <td><img class="product-thumb" src="${p.image || 'https://via.placeholder.com/50'}" alt="${p.title}" onerror="this.src='https://via.placeholder.com/50'" /></td>
+        <td style="max-width:220px"><strong>${p.title}</strong><br/><span style="font-size:0.8rem;color:#888">${p.description ? p.description.substring(0,60) + '…' : ''}</span></td>
+        <td><span class="badge badge-info">${p.category || '—'}</span></td>
+        <td><strong>$${parseFloat(p.price).toFixed(2)}</strong></td>
+        <td>
+          <button class="btn btn-warning btn-sm" onclick="editProduct('${p.id}')">✏️ Edit</button>
+          <button class="btn btn-danger btn-sm" style="margin-left:6px" onclick="promptDelete('${p.id}')">🗑️ Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function loadAdminProducts() {
+    renderAdminProducts(Store.getAdminProducts());
+  }
+
+  // Save / Update product
+  document.getElementById('save-product-btn').addEventListener('click', () => {
+    const title = document.getElementById('p-title').value.trim();
+    const price = parseFloat(document.getElementById('p-price').value);
+    const category = document.getElementById('p-category').value;
+    const image = document.getElementById('p-image').value.trim();
+    const description = document.getElementById('p-desc').value.trim();
+
+    if (!title || isNaN(price) || !category) {
+      showToast('Please fill in required fields (Title, Price, Category)', 'error');
+      return;
+    }
+
+    const productData = { title, price, category, image: image || 'https://via.placeholder.com/200', description };
+
+    if (editingId) {
+      Store.updateAdminProduct(editingId, productData);
+      showToast('Product updated!', 'success');
+      cancelEdit();
+    } else {
+      Store.saveAdminProduct(productData);
+      showToast('Product added!', 'success');
+    }
+
+    clearForm();
+    loadAdminProducts();
+  });
+
+  function editProduct(id) {
+    const product = Store.getAdminProducts().find(p => p.id === id);
+    if (!product) return;
+    editingId = id;
+    document.getElementById('p-title').value = product.title;
+    document.getElementById('p-price').value = product.price;
+    document.getElementById('p-category').value = product.category;
+    document.getElementById('p-image').value = product.image || '';
+    document.getElementById('p-desc').value = product.description || '';
+    document.getElementById('form-title').textContent = '✏️ Edit Product';
+    document.getElementById('save-product-btn').textContent = '💾 Save Changes';
+    document.getElementById('cancel-edit-btn').style.display = 'inline-flex';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function cancelEdit() {
+    editingId = null;
+    clearForm();
+    document.getElementById('form-title').textContent = '➕ Add New Product';
+    document.getElementById('save-product-btn').textContent = '➕ Add Product';
+    document.getElementById('cancel-edit-btn').style.display = 'none';
+  }
+
+  document.getElementById('cancel-edit-btn').addEventListener('click', cancelEdit);
+
+  function clearForm() {
+    ['p-title', 'p-price', 'p-image', 'p-desc'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('p-category').value = '';
+  }
+
+  // Delete
+  function promptDelete(id) {
+    deleteTargetId = id;
+    document.getElementById('delete-modal').classList.remove('hidden');
+  }
+
+  document.getElementById('cancel-delete').addEventListener('click', () => {
+    document.getElementById('delete-modal').classList.add('hidden');
+    deleteTargetId = null;
+  });
+
+  document.getElementById('confirm-delete').addEventListener('click', () => {
+    if (deleteTargetId) {
+      Store.deleteAdminProduct(deleteTargetId);
+      showToast('Product deleted', 'error');
+      loadAdminProducts();
+    }
+    document.getElementById('delete-modal').classList.add('hidden');
+    deleteTargetId = null;
+  });
+
+  // Load API products preview
+  async function loadApiProducts() {
+    try {
+      const res = await fetch('https://fakestoreapi.com/products?limit=10');
+      const products = await res.json();
+      document.getElementById('api-products-body').innerHTML = products.map(p => `
+        <tr>
+          <td><img class="product-thumb" src="${p.image}" alt="${p.title}" /></td>
+          <td style="max-width:220px"><strong>${p.title.substring(0,50)}${p.title.length > 50 ? '…' : ''}</strong></td>
+          <td><span class="badge badge-info">${p.category}</span></td>
+          <td><strong>$${parseFloat(p.price).toFixed(2)}</strong></td>
+        </tr>
+      `).join('');
+    } catch (e) {
+      document.getElementById('api-products-body').innerHTML = '<tr><td colspan="4" style="text-align:center;color:#aaa">Failed to load API products</td></tr>';
+    }
+  }
+
+  loadAdminProducts();
+  loadApiProducts();
+</script>
+</body>
+</html>
