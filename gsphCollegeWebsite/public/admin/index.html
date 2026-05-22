@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#061f4a" />
+    <title>Staff Login | GSPG College</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../mobile-responsive.css" />
+    <style>
+      /* ══════════ LAZY LOADING SCREEN ══════════ */
+      #loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 50%, #0f172a 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+      }
+
+      #loader.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .loader-logo {
+        width: min(280px, 72vw);
+        height: 186px;
+        animation: logoFloat 2s ease-in-out infinite;
+      }
+
+      .loader-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 16px;
+        filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
+      }
+
+      @keyframes logoFloat {
+        0%, 100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+      }
+
+      /* ===== Login Page with Banner ===== */
+      .auth-page {
+        min-height: 100vh;
+        height: 100vh;
+        width: 100%;
+        background: url("../assets/foundation-banner.png") no-repeat center center;
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        position: relative;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Subtle overlay for readability */
+      .auth-page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.35) 0%,
+          rgba(255, 255, 255, 0) 45%
+        );
+        pointer-events: none;
+      }
+
+      /* ===== Login Card ===== */
+      .auth-card {
+        position: relative;
+        z-index: 1;
+        background: rgba(255, 255, 255, 0.96);
+        width: 100%;
+        max-width: 400px;
+        margin-left: 0;
+        padding: 40px 60px 40px 32px;
+        border-radius: 0 12px 12px 0;
+        box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15);
+        clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+      }
+
+      .brand-small {
+        display: inline-block;
+        background: #0891b2;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+      }
+
+      .auth-card h1 {
+        font-size: 30px;
+        color: #1e40af;
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+
+      .auth-card .subtitle {
+        font-size: 13px;
+        color: #6b7785;
+        margin-bottom: 22px;
+        line-height: 1.4;
+      }
+
+      .form-group { margin-bottom: 14px; }
+
+      .form-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: #4a5560;
+        margin-bottom: 6px;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1px solid #d8dde2;
+        border-radius: 4px;
+        font-size: 13px;
+        outline: none;
+        background: #fff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        font-family: inherit;
+      }
+
+      .form-group input::placeholder { color: #9aa4ad; }
+
+      .form-group input:focus {
+        border-color: #0891b2;
+        box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.15);
+      }
+
+      .btn {
+        cursor: pointer;
+        border: none;
+        font-family: inherit;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #1e40af, #3b82f6);
+        color: #fff;
+        padding: 11px 20px;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        border-radius: 3px;
+        text-transform: uppercase;
+        transition: background 0.2s, transform 0.1s;
+      }
+
+      .btn-primary:hover { 
+        background: linear-gradient(135deg, #1e3a8a, #1e40af);
+      }
+      .btn-primary:active { transform: translateY(1px); }
+
+      .btn-block {
+        width: 100%;
+        margin-top: 6px;
+      }
+
+      .link-back {
+        display: inline-block;
+        margin-top: 18px;
+        font-size: 12px;
+        color: #1eb6b6;
+        text-decoration: none;
+      }
+      .link-back:hover { text-decoration: underline; }
+
+      /* Theme toggle */
+      .theme-toggle {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid #d8dde2;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 18px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Loading overlay */
+      .hidden { display: none !important; }
+
+      #toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 200;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .auth-page {
+          justify-content: center;
+          padding: 20px;
+          background-position: center;
+        }
+        .auth-card {
+          clip-path: none;
+          padding: 32px;
+          border-radius: 12px;
+          max-width: 420px;
+        }
+        .auth-page::before {
+          background: rgba(255, 255, 255, 0.5);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .auth-card { padding: 24px; }
+        .auth-card h1 { font-size: 24px; }
+      }
+
+      /* Match student login style */
+      #loader {
+        background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 50%, #0f172a 100%);
+      }
+
+      .auth-page {
+        background-size: 85% auto;
+      }
+
+      .auth-page::before {
+        background: rgba(25, 34, 75, 0.6);
+        z-index: 0;
+      }
+
+      .auth-card {
+        width: 380px;
+        max-width: 380px;
+        height: 410px;
+        margin-left: 0;
+        padding: 40px 60px 40px 32px;
+        border-radius: 0 12px 12px 0;
+        clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+        border: none;
+        box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .brand-small {
+        background: linear-gradient(135deg, #061f4a, #0b3f86 62%, #d5a948);
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+      }
+
+      .auth-card h1 {
+        color: #1e40af;
+        font-size: 32px;
+        font-weight: 600;
+      }
+
+      .form-group input:focus {
+        border-color: #0b3f86;
+        box-shadow: 0 0 0 3px rgba(11, 63, 134, 0.15);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #061f4a, #0b3f86 62%, #d5a948);
+        height: 30px;
+        padding: 0 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        border-radius: 8px;
+        box-shadow: none;
+        letter-spacing: 0;
+        text-transform: none;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #031229, #061f4a 62%, #d5a948);
+      }
+
+      .link-back {
+        margin-top: auto;
+        padding-top: 18px;
+        color: #1eb6b6;
+        font-weight: 400;
+      }
+
+      .spinner {
+        border-top-color: #0891b2;
+      }
+
+      @media (max-width: 768px) {
+        .auth-card {
+          margin-left: 0;
+          clip-path: none;
+          width: 100%;
+          height: 410px;
+          padding: 32px;
+          border-radius: 12px;
+          max-width: 400px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .auth-card { padding: 24px; }
+        .auth-card h1 { font-size: 26px; }
+      }
+    </style>
+  </head>
+  <body data-page="login">
+    <!-- ═══ LAZY LOADER ═══ -->
+    <div id="loader">
+      <div class="loader-logo">
+        <img src="../assets/college-logo.png" alt="College Logo">
+      </div>
+    </div>
+   
+    <div id="toast-container"></div>
+
+    <div class="auth-page">
+      <div class="auth-card">
+        <div class="brand-small">Admin &amp; Faculty Console</div>
+        <h1>Staff sign in</h1>
+        <p class="subtitle">Use your institutional email and password.</p>
+        <form id="admin-login-form">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="you@gsph.edu"
+              required
+              autocomplete="username"
+            />
+          </div>
+          <div class="form-group">
+            <label for="admin-password">Password</label>
+            <input
+              type="password"
+              id="admin-password"
+              name="password"
+              placeholder="Password"
+              required
+              autocomplete="current-password"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </form>
+      </div>
+    </div>
+    <script>
+      // Hide loader after page loads
+      window.addEventListener('load', function() {
+        const loader = document.getElementById('loader');
+        setTimeout(function() {
+          loader.classList.add('hidden');
+        }, 1000);
+      });
+    </script>
+    <script src="script.js"></script>
+  </body>
+</html>

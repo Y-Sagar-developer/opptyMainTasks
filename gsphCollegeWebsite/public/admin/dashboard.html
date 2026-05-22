@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#061f4a" />
+    <title>Admin Dashboard | GSPG College</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../mobile-responsive.css" />
+    <!-- Chart.js for analytics (loaded before our script) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- API Client for MySQL Backend -->
+    <script src="../api-client.js"></script>
+    <style>
+      /* ══════════ LAZY LOADING SCREEN ══════════ */
+      #loader {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle at center, rgba(213, 169, 72, 0.16), transparent 17rem),
+          linear-gradient(135deg, #031229 0%, #061f4a 56%, #0f172a 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 1rem;
+        z-index: 9999;
+        transition: opacity 0.55s ease, visibility 0.55s ease;
+      }
+
+      #loader.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .loader-logo {
+        width: 154px;
+        height: 154px;
+        position: relative;
+        display: grid;
+        place-items: center;
+        isolation: isolate;
+      }
+
+      .loader-logo::before,
+      .loader-logo::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+      }
+
+      .loader-logo::before {
+        border: 5px solid rgba(255, 255, 255, 0.14);
+        border-top-color: #d5a948;
+        border-right-color: #06b6d4;
+        animation: loaderRotate 0.85s linear infinite;
+      }
+
+      .loader-logo::after {
+        inset: 15px;
+        border: 2px solid rgba(255, 255, 255, 0.18);
+        border-bottom-color: #ffffff;
+        animation: loaderRotate 1.35s linear infinite reverse;
+      }
+
+      .loader-logo img {
+        width: 86px;
+        height: 86px;
+        object-fit: contain;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.94);
+        padding: 8px;
+        filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.45));
+        position: relative;
+        z-index: 1;
+        animation: loaderPulse 1.6s ease-in-out infinite;
+      }
+
+      .loader-text {
+        color: rgba(255, 255, 255, 0.86);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      @keyframes loaderRotate {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes loaderPulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.06);
+        }
+      }
+    </style>
+  </head>
+  <body data-page="admin-dashboard">
+    <!-- ═══ LAZY LOADER ═══ -->
+    <div id="loader">
+      <div class="loader-logo">
+        <img src="../assets/college-logo.png" alt="GSPH Logo">
+      </div>
+      <div class="loader-text">Loading</div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <header class="app-header no-print">
+      <button type="button" class="menu-toggle" id="admin-menu-toggle" aria-label="Open menu">
+        ☰
+      </button>
+      <span class="logo" id="admin-header-title">GSPG Admin Console</span>
+      <div class="header-actions">
+        <input
+          type="search"
+          class="search-input"
+          id="admin-global-search"
+          placeholder="Search in tables…"
+        />
+        <span id="admin-role-badge" class="tag" style="margin: 0"></span>
+        <button type="button" class="btn btn-outline btn-sm" id="admin-logout">Logout</button>
+      </div>
+    </header>
+
+    <div class="sidebar-overlay" id="admin-sidebar-overlay"></div>
+    <div class="app-layout">
+      <aside class="sidebar no-print" id="admin-sidebar">
+        <div class="sidebar-brand">
+          <img src="../assets/college-logo.png" alt="GSPG Logo" />
+          <div>
+            <strong>GSPG</strong>
+            <span>Admin Workspace</span>
+          </div>
+        </div>
+        <nav id="admin-nav">
+          <a href="#" data-section="overview" class="active">📈 Overview</a>
+          <a href="#" data-section="students" data-roles="admin,hod">👥 Students</a>
+          <a href="#" data-section="teachers" data-roles="admin">👨‍🏫 Teachers</a>
+          <a href="#" data-section="branches" data-roles="admin">🏛️ Branches</a>
+          <a href="#" data-section="subjects" data-roles="admin,hod">📚 Subjects</a>
+          <a href="#" data-section="attendance" data-roles="admin,hod,teacher"
+            >✅ Attendance</a
+          >
+          <a href="#" data-section="marks" data-roles="admin,hod,teacher">📊 Marks</a>
+          <a href="#" data-section="assignments" data-roles="admin,hod,teacher"
+            >📎 Assignments</a
+          >
+          <a href="#" data-section="timetable" data-roles="admin,hod">🗓️ Timetable</a>
+          <a href="#" data-section="exams" data-roles="admin,hod,teacher">📝 Exams</a>
+          <a href="#" data-section="results" data-roles="admin,hod">📜 Results</a>
+          <a href="#" data-section="notifications" data-roles="admin,hod,teacher"
+            >🔔 Notifications</a
+          >
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <!-- OVERVIEW -->
+        <section class="page-section" id="adm-overview">
+          <h1 class="section-title">Dashboard overview</h1>
+          <div class="cards-grid" id="admin-stats-cards"></div>
+          <div class="charts-row">
+            <div class="chart-card">
+              <h3>Attendance overview (%)</h3>
+              <div class="chart-box"><canvas id="chart-attendance"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <h3>Fee status</h3>
+              <div class="chart-box"><canvas id="chart-fees"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <h3>Result analytics (SGPA)</h3>
+              <div class="chart-box"><canvas id="chart-sgpa"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <h3>Student performance by branch</h3>
+              <div class="chart-box"><canvas id="chart-branch"></canvas></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STUDENTS -->
+        <section class="page-section hidden" id="adm-students">
+          <h1 class="section-title">Manage students</h1>
+          <div class="toolbar">
+            <select id="filter-branch">
+              <option value="">All branches</option>
+            </select>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-add-student">
+              + Add student
+            </button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table" id="students-table">
+              <thead>
+                <tr>
+                  <th>Roll</th>
+                  <th>Name</th>
+                  <th>Branch</th>
+                  <th>Year</th>
+                  <th>Section</th>
+                  <th>CGPA</th>
+                  <th>Fee</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- TEACHERS -->
+        <section class="page-section hidden" id="adm-teachers">
+          <h1 class="section-title">Teachers &amp; staff</h1>
+          <button type="button" class="btn btn-primary btn-sm" id="btn-add-teacher">
+            + Add teacher
+          </button>
+          <div class="table-wrap" style="margin-top: 1rem">
+            <table class="data-table" id="teachers-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Branch</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- BRANCHES -->
+        <section class="page-section hidden" id="adm-branches">
+          <h1 class="section-title">Branches</h1>
+          <div class="toolbar">
+            <input type="text" id="new-branch-input" placeholder="New branch code" />
+            <button type="button" class="btn btn-accent btn-sm" id="btn-add-branch">
+              Add branch
+            </button>
+          </div>
+          <div class="faculty-grid" id="branches-list"></div>
+        </section>
+
+        <!-- SUBJECTS -->
+        <section class="page-section hidden" id="adm-subjects">
+          <h1 class="section-title">Subjects</h1>
+          <button type="button" class="btn btn-primary btn-sm" id="btn-add-subject">
+            + Add subject
+          </button>
+          <div class="table-wrap" style="margin-top: 1rem">
+            <table class="data-table" id="subjects-table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Name</th>
+                  <th>Branch</th>
+                  <th>Semester</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ATTENDANCE -->
+        <section class="page-section hidden" id="adm-attendance">
+          <h1 class="section-title">Attendance Management</h1>
+          
+          <!-- Student Search -->
+          <div class="panel" style="margin-bottom: 1.5rem">
+            <h3>Search Student</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="att-student-roll">Enter Roll Number</label>
+                <input type="text" id="att-student-roll" placeholder="e.g. CSE22001" required />
+              </div>
+              <div class="form-group" style="display: flex; align-items: flex-end;">
+                <button type="button" class="btn btn-primary" id="btn-search-student-att">
+                  🔍 Load Attendance
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-bottom: 1.5rem">
+            <div class="holiday-year-head">
+              <h3>2026 Festival Holidays</h3>
+              <span id="admin-holiday-count" class="tag">0 holidays</span>
+            </div>
+            <div id="admin-holiday-year-list" class="holiday-year-grid"></div>
+          </div>
+
+          <!-- Student Info & Calendar -->
+          <div id="student-attendance-panel" style="display: none;">
+            <!-- Student Info Card -->
+            <div class="panel" style="margin-bottom: 1.5rem">
+              <div class="profile-hero" style="padding: 1rem; margin: 0;">
+                <img id="att-student-photo" src="" alt="Student" style="width: 80px; height: 80px;" />
+                <div class="profile-meta">
+                  <h2 id="att-student-name" style="margin: 0 0 0.5rem;">-</h2>
+                  <div class="profile-tags">
+                    <span class="tag" id="att-student-roll-display">-</span>
+                    <span class="tag" id="att-student-branch">-</span>
+                    <span class="tag" id="att-student-year">-</span>
+                    <span class="tag" id="att-student-section">-</span>
+                  </div>
+                  <p style="color:var(--text-muted); margin-top: 0.5rem;">
+                    <strong>Overall Attendance:</strong> 
+                    <span id="att-student-percentage" style="color: var(--primary); font-size: 1.2rem; font-weight: 700;">-</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Monthly Calendar -->
+            <div class="panel" style="margin-bottom: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3>Monthly Attendance Calendar</h3>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                  <button type="button" class="btn btn-outline btn-sm" id="btn-prev-month">
+                    ← Previous
+                  </button>
+                  <span id="current-month-display" style="font-weight: 600; min-width: 150px; text-align: center;">-</span>
+                  <button type="button" class="btn btn-outline btn-sm" id="btn-next-month">
+                    Next →
+                  </button>
+                </div>
+              </div>
+
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                Click on any date to mark Present (Green) or Absent (Red). Weekends are automatically marked as holidays.
+              </p>
+
+              <!-- Calendar Grid -->
+              <div id="admin-attendance-calendar" class="attendance-calendar"></div>
+
+              <!-- Legend -->
+              <div class="calendar-legend" style="margin-top: 1rem;">
+                <div class="legend-item">
+                  <div class="legend-color present"></div>
+                  <span>Present</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color absent"></div>
+                  <span>Absent</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color holiday"></div>
+                  <span>Holiday/Weekend</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color future"></div>
+                  <span>Not Marked</span>
+                </div>
+              </div>
+
+              <!-- Summary -->
+              <div style="margin-top: 1.5rem; padding: 1rem; background: var(--surface-2); border-radius: 8px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                  <div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">Present Days</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);" id="att-present-count">0</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">Absent Days</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--danger);" id="att-absent-count">0</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">Working Days</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);" id="att-working-days">0</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">Attendance %</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);" id="att-month-percentage">0%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attendance Records Table -->
+            <div class="panel">
+              <h3>Attendance Records (Date-wise)</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                Complete list of all marked attendance with dates, status, and approval details.
+              </p>
+              <div class="table-wrap">
+                <table class="data-table" id="attendance-records-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Day</th>
+                      <th>Status</th>
+                      <th>Marked By</th>
+                      <th>Marked On</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MARKS -->
+        <section class="page-section hidden" id="adm-marks">
+          <h1 class="section-title">Upload marks</h1>
+          <form id="form-marks" class="panel">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="marks-roll">Student roll</label>
+                <select id="marks-roll" required></select>
+              </div>
+              <div class="form-group">
+                <label for="marks-subject">Subject</label>
+                <select id="marks-subject" required></select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="marks-internal">Internal /30</label>
+                <input type="number" id="marks-internal" min="0" max="30" step="0.5" />
+              </div>
+              <div class="form-group">
+                <label for="marks-sem">Semester /70</label>
+                <input type="number" id="marks-sem" min="0" max="70" step="0.5" />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save marks</button>
+          </form>
+        </section>
+
+        <!-- ASSIGNMENTS -->
+        <section class="page-section hidden" id="adm-assignments">
+          <h1 class="section-title">Assignments</h1>
+          <form id="form-assignment" class="panel">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="as-title">Title</label>
+                <input type="text" id="as-title" required />
+              </div>
+              <div class="form-group">
+                <label for="as-branch">Branch</label>
+                <select id="as-branch" required></select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="as-subject">Subject code</label>
+                <input type="text" id="as-subject" required />
+              </div>
+              <div class="form-group">
+                <label for="as-due">Due date</label>
+                <input type="date" id="as-due" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="as-desc">Description</label>
+              <textarea id="as-desc" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Post assignment</button>
+          </form>
+          <div class="table-wrap" style="margin-top: 1rem">
+            <table class="data-table" id="assignments-admin-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Branch</th>
+                  <th>Subject</th>
+                  <th>Due</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- TIMETABLE -->
+        <section class="page-section hidden" id="adm-timetable">
+          <h1 class="section-title">Create timetable entry</h1>
+          <form id="form-timetable" class="panel">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="tt-key">Group key (Branch-Year-Section)</label>
+                <input type="text" id="tt-key" placeholder="CSE-2-A" required />
+              </div>
+              <div class="form-group">
+                <label for="tt-day">Day</label>
+                <select id="tt-day" required>
+                  <option>Monday</option>
+                  <option>Tuesday</option>
+                  <option>Wednesday</option>
+                  <option>Thursday</option>
+                  <option>Friday</option>
+                  <option>Saturday</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="tt-slot">Slot</label>
+                <input type="text" id="tt-slot" placeholder="09:00 - 10:00" required />
+              </div>
+              <div class="form-group">
+                <label for="tt-room">Room</label>
+                <input type="text" id="tt-room" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="tt-subject">Subject name</label>
+                <input type="text" id="tt-subject" required />
+              </div>
+              <div class="form-group">
+                <label for="tt-faculty">Faculty name</label>
+                <input type="text" id="tt-faculty" required />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Add slot</button>
+          </form>
+        </section>
+
+        <!-- EXAMS -->
+        <section class="page-section hidden" id="adm-exams">
+          <h1 class="section-title">Exam schedules</h1>
+          <form id="form-exam" class="panel">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ex-subject">Subject</label>
+                <input type="text" id="ex-subject" required />
+              </div>
+              <div class="form-group">
+                <label for="ex-branch">Branch</label>
+                <select id="ex-branch" required></select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ex-year">Year</label>
+                <input type="number" id="ex-year" min="1" max="5" value="2" />
+              </div>
+              <div class="form-group">
+                <label for="ex-date">Date</label>
+                <input type="date" id="ex-date" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ex-time">Time</label>
+                <input type="text" id="ex-time" placeholder="10:00 AM" required />
+              </div>
+              <div class="form-group">
+                <label for="ex-hall">Hall</label>
+                <input type="text" id="ex-hall" required />
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-save-exam">Add exam</button>
+          </form>
+          <div class="table-wrap" style="margin-top: 1rem">
+            <table class="data-table" id="exams-table">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Branch</th>
+                  <th>Year</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Hall</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- RESULTS -->
+        <section class="page-section hidden" id="adm-results">
+          <h1 class="section-title">Manage results</h1>
+          <form id="form-result" class="panel">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="res-roll">Roll</label>
+                <select id="res-roll" required></select>
+              </div>
+              <div class="form-group">
+                <label for="res-sem">Semester</label>
+                <input type="text" id="res-sem" placeholder="Sem 4" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="res-sgpa">SGPA</label>
+                <input type="number" id="res-sgpa" min="0" max="10" step="0.01" required />
+              </div>
+              <div class="form-group">
+                <label for="res-status">Status</label>
+                <select id="res-status">
+                  <option>Pass</option>
+                  <option>Pass with backlog</option>
+                  <option>Fail</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save result</button>
+          </form>
+          <div class="table-wrap" style="margin-top: 1rem">
+            <table class="data-table" id="results-admin-table">
+              <thead>
+                <tr>
+                  <th>Roll</th>
+                  <th>Semester</th>
+                  <th>SGPA</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- NOTIFICATIONS -->
+        <section class="page-section hidden" id="adm-notifications">
+          <h1 class="section-title">Post notification</h1>
+          <form id="form-notification" class="panel">
+            <div class="form-group">
+              <label for="nt-title">Title</label>
+              <input type="text" id="nt-title" required />
+            </div>
+            <div class="form-group">
+              <label for="nt-body">Message</label>
+              <textarea id="nt-body" rows="3" required></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nt-audience">Audience</label>
+                <select id="nt-audience">
+                  <option value="all">All students</option>
+                  <option value="branch">Specific branch</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="nt-branch">Branch (if specific)</label>
+                <select id="nt-branch"></select>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Publish</button>
+          </form>
+          <ul class="notif-list" id="notifications-admin" style="margin-top: 1rem"></ul>
+        </section>
+      </main>
+    </div>
+
+    <!-- Generic modal for add/edit student -->
+    <div class="modal-backdrop" id="modal-student">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="modal-student-title">Student</h3>
+          <button type="button" class="modal-close" data-close="modal-student">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="form-student-modal">
+            <input type="hidden" id="sm-old-roll" />
+            <input type="hidden" id="sm-photo-current" value="" />
+            <div class="form-row">
+              <div class="form-group">
+                <label for="sm-roll">Roll number</label>
+                <input type="text" id="sm-roll" required />
+              </div>
+              <div class="form-group">
+                <label for="sm-name">Full name</label>
+                <input type="text" id="sm-name" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="sm-branch">Branch</label>
+                <select id="sm-branch" required></select>
+              </div>
+              <div class="form-group">
+                <label for="sm-year">Year</label>
+                <input type="number" id="sm-year" min="1" max="5" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="sm-section">Section</label>
+                <input type="text" id="sm-section" maxlength="2" required />
+              </div>
+              <div class="form-group">
+                <label for="sm-password">Password</label>
+                <input type="text" id="sm-password" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="sm-email">Email</label>
+                <input type="email" id="sm-email" />
+              </div>
+              <div class="form-group">
+                <label for="sm-phone">Phone</label>
+                <input type="tel" id="sm-phone" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="sm-cgpa">CGPA</label>
+                <input type="number" id="sm-cgpa" min="0" max="10" step="0.01" />
+              </div>
+              <div class="form-group">
+                <label for="sm-fee">Fee status</label>
+                <select id="sm-fee">
+                  <option>Paid</option>
+                  <option>Pending</option>
+                  <option>Partial</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Student photo (upload)</label>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 1rem;
+                  flex-wrap: wrap;
+                  margin-top: 0.35rem;
+                "
+              >
+                <img
+                  id="sm-photo-preview"
+                  alt="Student preview"
+                  width="96"
+                  height="96"
+                  style="
+                    border-radius: 50%;
+                    object-fit: cover;
+                    border: 2px solid var(--border);
+                    background: var(--surface-2);
+                  "
+                />
+                <div>
+                  <input type="file" id="sm-photo-file" accept="image/*" />
+                  <p
+                    style="
+                      font-size: 0.8rem;
+                      color: var(--text-muted);
+                      margin: 0.35rem 0 0;
+                      max-width: 280px;
+                    "
+                  >
+                    Admin uploads the picture here; it is saved with the student
+                    and shown on their dashboard after roll login.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="sm-photo">Photo URL (optional)</label>
+              <input
+                type="text"
+                id="sm-photo"
+                placeholder="Or paste image / https://… URL"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Save</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teacher add modal -->
+    <div class="modal-backdrop" id="modal-teacher">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Add teacher</h3>
+          <button type="button" class="modal-close" data-close="modal-teacher">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="form-teacher-modal">
+            <div class="form-group">
+              <label for="tm-name">Name</label>
+              <input type="text" id="tm-name" required />
+            </div>
+            <div class="form-group">
+              <label for="tm-email">Email (login)</label>
+              <input type="email" id="tm-email" required />
+            </div>
+            <div class="form-group">
+              <label for="tm-password">Password</label>
+              <input type="text" id="tm-password" required />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="tm-role">Role</label>
+                <select id="tm-role">
+                  <option value="teacher">Teacher</option>
+                  <option value="hod">HOD</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="tm-branch">Branch</label>
+                <select id="tm-branch"></select>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Add teacher</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subject modal -->
+    <div class="modal-backdrop" id="modal-subject">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Add subject</h3>
+          <button type="button" class="modal-close" data-close="modal-subject">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="form-subject-modal">
+            <div class="form-group">
+              <label for="sub-code">Code</label>
+              <input type="text" id="sub-code" required />
+            </div>
+            <div class="form-group">
+              <label for="sub-name">Name</label>
+              <input type="text" id="sub-name" required />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="sub-branch">Branch</label>
+                <select id="sub-branch"></select>
+              </div>
+              <div class="form-group">
+                <label for="sub-sem">Semester</label>
+                <input type="number" id="sub-sem" min="1" max="8" value="4" />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Save subject</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance Marking Modal -->
+    <div class="modal-backdrop" id="modal-mark-attendance">
+      <div class="modal attendance-modal" style="max-width: 420px;">
+        <div class="modal-header attendance-modal__header">
+          <div>
+            <span class="attendance-modal__eyebrow">Admin Approval</span>
+            <h3>Mark Attendance</h3>
+          </div>
+          <button type="button" class="modal-close" data-close="modal-mark-attendance">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body attendance-modal__body">
+          <div class="attendance-modal__summary" style="text-align: center; margin-bottom: 1.5rem;">
+            <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+              Student: <strong id="att-modal-student-name">-</strong>
+            </div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">
+              <span id="att-modal-date">-</span>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">
+              <span id="att-modal-day">-</span>
+            </div>
+          </div>
+
+          <div class="attendance-modal__actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <button type="button" class="btn btn-block attendance-choice attendance-choice--present" id="btn-mark-present" 
+                    style="background: var(--success); color: white; padding: 1rem; font-size: 1rem;">
+              <span class="attendance-choice__icon">&#10003;</span>
+              <span>Present</span>
+              <small>Approve as attended</small>
+            </button>
+            <button type="button" class="btn btn-block attendance-choice attendance-choice--absent" id="btn-mark-absent" 
+                    style="background: var(--danger); color: white; padding: 1rem; font-size: 1rem;">
+              <span class="attendance-choice__icon">&times;</span>
+              <span>Absent</span>
+              <small>Approve as missed</small>
+            </button>
+          </div>
+
+          <button type="button" class="btn btn-outline btn-block attendance-clear" id="btn-clear-attendance">
+            Clear / Unmarked
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Hide loader after page loads (including on refresh)
+      // But skip if coming from login (loader already shown)
+      window.addEventListener('load', function() {
+        const loader = document.getElementById('loader');
+        if (loader) {
+          // Check if we just logged in (within last 2 seconds)
+          const justLoggedIn = sessionStorage.getItem('justLoggedIn');
+          if (justLoggedIn) {
+            // Clear the flag and hide immediately
+            sessionStorage.removeItem('justLoggedIn');
+            loader.classList.add('hidden');
+          } else {
+            // Normal page load - show loader for 700ms
+            setTimeout(function() {
+              loader.classList.add('hidden');
+            }, 700);
+          }
+        }
+      });
+
+      // Show loader immediately on page unload (navigation/refresh)
+      window.addEventListener('beforeunload', function() {
+        const loader = document.getElementById('loader');
+        if (loader) {
+          loader.classList.remove('hidden');
+        }
+      });
+    </script>
+    <script src="script.js"></script>
+  </body>
+</html>

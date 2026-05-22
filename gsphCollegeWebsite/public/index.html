@@ -1,0 +1,3055 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GSPG College | Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #1e40af;
+      --primary-light: #3b82f6;
+      --primary-dark: #1e3a8a;
+      --accent: #0891b2;
+      --accent-light: #06b6d4;
+      --bg-dark: #0f172a;
+      --bg-section: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --success: #059669;
+      --gradient-1: linear-gradient(135deg, #1e40af, #3b82f6, #0891b2);
+      --gradient-2: linear-gradient(135deg, #0891b2, #06b6d4, #3b82f6);
+      --gradient-3: linear-gradient(135deg, #059669, #0891b2, #1e40af);
+    }
+
+    /* ══════════ LAZY LOADING SCREEN ══════════ */
+  /* ══════════ LAZY LOADING SCREEN ══════════ */
+    #loader {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background:
+        radial-gradient(circle at center, rgba(213, 169, 72, 0.16), transparent 17rem),
+        linear-gradient(135deg, #031229 0%, #061f4a 56%, #0f172a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 1rem;
+      z-index: 9999;
+      transition: opacity 0.55s ease, visibility 0.55s ease;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loader-logo {
+      width: 154px;
+      height: 154px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      isolation: isolate;
+    }
+
+    .loader-logo::before,
+    .loader-logo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+    }
+
+    .loader-logo::before {
+      border: 5px solid rgba(255, 255, 255, 0.14);
+      border-top-color: #d5a948;
+      border-right-color: #06b6d4;
+      animation: loaderRotate 0.85s linear infinite;
+    }
+
+    .loader-logo::after {
+      inset: 15px;
+      border: 2px solid rgba(255, 255, 255, 0.18);
+      border-bottom-color: #ffffff;
+      animation: loaderRotate 1.35s linear infinite reverse;
+    }
+
+    .loader-logo img {
+      width: 86px;
+      height: 86px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.94);
+      padding: 8px;
+      filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.45));
+      position: relative;
+      z-index: 1;
+      animation: loaderPulse 1.6s ease-in-out infinite;
+    }
+
+    .loader-text {
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    @keyframes loaderRotate {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes loaderPulse {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.06);
+      }
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ══════════ NAVBAR ══════════ */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 72px;
+      backdrop-filter: blur(24px);
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--glass-border);
+      transition: all 0.3s;
+    }
+
+    .navbar.scrolled {
+      background: rgba(22, 58, 107, 0.98);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .navbar .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .imagtag {
+      width: 90px;
+      height: 90px;
+      flex: 0 0 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 12px;
+      background:  rgba(255, 255, 255, 0.9);
+    
+    }
+
+    .imagtag img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      background: var(--gradient-1);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-icon::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+      border-radius: inherit;
+    }
+
+    .brand-text h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      color:black;
+    }
+
+    .brand-text span {
+      font-size: 0.7rem;
+      color:black;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .nav-center a {
+      color: black;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .nav-center a:hover {
+      color: var(--text-primary);
+      background: var(--glass-bg);
+    }
+
+    .nav-center a.active {
+      color: var(--primary-light);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .btn-login {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn-student-nav {
+      background: var(--gradient-1);
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-student-nav:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(79, 70, 229, 0.4);
+    }
+
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.4rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    /* ══════════ HERO SLIDER ══════════ */
+    .hero-slider {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 650px;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+      z-index: 2;
+      pointer-events: auto;
+    }
+
+    .slide-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.3);
+      transform: scale(1.1);
+      transition: transform 8s ease;
+    }
+
+    .slide.active .slide-bg {
+      transform: scale(1);
+    }
+
+    /* .slide-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,14,26,0.92) 0%, rgba(10,14,26,0.7) 50%, rgba(10,14,26,0.35) 100%); } */
+    .slide-content {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 6rem 3rem 3rem;
+    }
+
+    .slide-left {
+      max-width: 620px;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.4rem 1.2rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      color: var(--accent-light);
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: all 0.6s ease 0.3s;
+    }
+
+    .slide.active .slide-badge {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .slide-title {
+      font-size: 3.75rem;
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+      text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 0.8s ease 0.5s;
+    }
+
+    .slide.active .slide-title {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .slide-title .gradient-text {
+      background: linear-gradient(135deg, var(--primary-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .slide-desc {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.75);
+      max-width: 500px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: all 0.8s ease 0.7s;
+    }
+
+    .slide.active .slide-desc {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .slide-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease 0.9s;
+    }
+
+    .slide.active .slide-buttons {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slider-controls {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      z-index: 10;
+    }
+
+    .slider-dots {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .slider-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .slider-dot.active {
+      background: var(--primary-light);
+      border-color: var(--primary-light);
+      box-shadow: 0 0 15px rgba(129, 140, 248, 0.5);
+    }
+
+    .slider-dot.active::after {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border: 2px solid var(--primary-light);
+      border-radius: 50%;
+      animation: ping 2s ease-in-out infinite;
+    }
+
+    @keyframes ping {
+
+      0%,
+      100% {
+        opacity: 0.5;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0;
+        transform: scale(1.4);
+      }
+    }
+
+    .slider-arrow {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      backdrop-filter: blur(10px);
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+    }
+
+    .slider-arrow:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .slider-arrow.prev {
+      left: 2rem;
+    }
+
+    .slider-arrow.next {
+      right: 2rem;
+    }
+
+    .slider-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 4px;
+      background: var(--gradient-1);
+      z-index: 10;
+      transition: width linear;
+      border-radius: 0 2px 0 0;
+    }
+
+    /* ══════════ COMMON ══════════ */
+    .section {
+      padding: 6rem 2rem;
+      position: relative;
+    }
+
+    .section-alt {
+      background: var(--bg-section);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-header .overline {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--primary-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-header .overline::before,
+    .section-header .overline::after {
+      content: "";
+      width: 30px;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    .section-header h2 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    .section-header h2 .highlight {
+      background: linear-gradient(135deg, var(--primary-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-header p {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      max-width: 550px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.75rem;
+      border-radius: 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--gradient-1);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(79, 70, 229, 0.35);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 8px 35px rgba(79, 70, 229, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-accent {
+      background: var(--gradient-2);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35);
+    }
+
+    .btn-accent:hover {
+      box-shadow: 0 8px 35px rgba(245, 158, 11, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-outline:hover {
+      border-color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-hero {
+      padding: 0.9rem 2rem;
+      font-size: 0.95rem;
+    }
+
+    .btn .arrow {
+      transition: transform 0.3s;
+    }
+
+    .btn:hover .arrow {
+      transform: translateX(4px);
+    }
+
+    /* ══════════ ABOUT / CAMPUS LIFE ══════════ */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .about-images {
+      position: relative;
+      height: 500px;
+    }
+
+    .about-img {
+      position: absolute;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      border: 3px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.4s ease;
+    }
+
+    .about-img:hover {
+      transform: scale(1.03);
+    }
+
+    .about-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .about-img-1 {
+      width: 280px;
+      height: 320px;
+      top: 0;
+      left: 0;
+      z-index: 2;
+    }
+
+    .about-img-2 {
+      width: 250px;
+      height: 280px;
+      top: 60px;
+      right: 0;
+      z-index: 1;
+    }
+
+    .about-img-3 {
+      width: 220px;
+      height: 180px;
+      bottom: 0;
+      left: 50px;
+      z-index: 3;
+    }
+
+    .about-float-card {
+      position: absolute;
+      bottom: 30px;
+      right: 20px;
+      z-index: 4;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .about-float-card .afc-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--gradient-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+    }
+
+    .about-float-card .afc-text .afc-num {
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .about-float-card .afc-text .afc-label {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .about-text .about-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(79, 70, 229, 0.15);
+      color: var(--primary-light);
+      padding: 0.35rem 1rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    .about-text h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.25rem;
+    }
+
+    .about-text h2 .highlight {
+      background: linear-gradient(135deg, var(--primary-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .about-text>p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .about-feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .about-feature .af-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      flex-shrink: 0;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .about-feature h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+
+    .about-feature p {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ══════════ DEPARTMENTS ══════════ */
+    .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .dept-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .dept-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(79, 70, 229, 0.15), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .dept-card:hover::before {
+      opacity: 1;
+    }
+
+    .dept-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    .dept-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      margin: 0 auto 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      position: relative;
+    }
+
+    .dept-icon::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+    }
+
+    .dept-card:nth-child(1) .dept-icon {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+    }
+
+    .dept-card:nth-child(2) .dept-icon {
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+    }
+
+    .dept-card:nth-child(3) .dept-icon {
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .dept-card:nth-child(4) .dept-icon {
+      background: linear-gradient(135deg, #ef4444, #ec4899);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .dept-card:nth-child(5) .dept-icon {
+      background: linear-gradient(135deg, #8b5cf6, #a855f7);
+      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+    }
+
+    .dept-card:nth-child(6) .dept-icon {
+      background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+    }
+
+    .dept-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .dept-card p {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
+    }
+
+    .dept-card .dept-meta {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .dept-card .dept-meta span {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* ══════════ CAMPUS GALLERY ══════════ */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 220px);
+      gap: 1rem;
+    }
+
+    .gallery-item {
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid var(--glass-border);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease, filter 0.4s ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.08);
+      filter: brightness(0.7);
+    }
+
+    .gallery-item .gallery-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+      padding: 1.5rem 1rem 0.75rem;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+
+    .gallery-item:hover .gallery-label {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .gallery-label h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .gallery-label p {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* ══════════ EVENTS / NEWS ══════════ */
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .event-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .event-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    .event-img {
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .event-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .event-card:hover .event-img img {
+      transform: scale(1.08);
+    }
+
+    .event-date {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: var(--gradient-1);
+      padding: 0.5rem 0.75rem;
+      border-radius: 12px;
+      text-align: center;
+      min-width: 56px;
+      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+    }
+
+    .event-date .ed-day {
+      font-size: 1.3rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .event-date .ed-month {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.85;
+    }
+
+    .event-tag {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .event-tag.upcoming {
+      color: var(--success);
+    }
+
+    .event-tag.news {
+      color: var(--accent-light);
+    }
+
+    .event-body {
+      padding: 1.5rem;
+    }
+
+    .event-body h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .event-body p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .event-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .event-meta span {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .event-meta a {
+      font-size: 0.8rem;
+      color: var(--primary-light);
+      text-decoration: none;
+      font-weight: 600;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: gap 0.2s;
+    }
+
+    .event-meta a:hover {
+      gap: 0.6rem;
+    }
+
+    /* ══════════ ACHIEVEMENTS ══════════ */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .achievement-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .achievement-card::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(79, 70, 229, 0.1), transparent, transparent);
+      animation: rotate-border 6s linear infinite;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .achievement-card:hover::before {
+      opacity: 1;
+    }
+
+    .achievement-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(79, 70, 229, 0.3);
+    }
+
+    @keyframes rotate-border {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .achievement-card .ach-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .achievement-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 1.25rem;
+    }
+
+    .achievement-card:nth-child(1) .achievement-icon {
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(124, 58, 237, 0.2));
+      color: var(--primary-light);
+    }
+
+    .achievement-card:nth-child(2) .achievement-icon {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(249, 115, 22, 0.2));
+      color: var(--accent-light);
+    }
+
+    .achievement-card:nth-child(3) .achievement-icon {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
+      color: #34d399;
+    }
+
+    .achievement-card:nth-child(4) .achievement-icon {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(236, 72, 153, 0.2));
+      color: #f87171;
+    }
+
+    .achievement-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .achievement-card p {
+      color: var(--text-secondary);
+      font-size: 0.87rem;
+      line-height: 1.6;
+    }
+
+    .achievement-card .ach-year {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    /* ══════════ COUNTERS ══════════ */
+    .counters-section {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .counters-bg {
+      position: absolute;
+      inset: 0;
+      background: var(--gradient-1);
+      opacity: 0.9;
+    }
+
+    .counters-bg::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><circle cx="40" cy="40" r="1" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+      background-size: 40px 40px;
+    }
+
+    .counters-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .counters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+
+    .counter-item {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    .counter-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin: 0 auto 1rem;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .counter-number {
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+      letter-spacing: -0.03em;
+    }
+
+    .counter-suffix {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .counter-label {
+      font-size: 0.85rem;
+      opacity: 0.85;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .counter-divider {
+      width: 40px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 3px;
+      margin: 0.5rem auto;
+    }
+
+    /* ══════════ WHY CHOOSE US ══════════ */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .why-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .why-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .why-card .why-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin: 0 auto 1.25rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+    }
+
+    .why-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .why-card p {
+      color: var(--text-secondary);
+      font-size: 0.87rem;
+      line-height: 1.6;
+    }
+
+
+    /* ══════════ ORBIT SECTION ══════════ */
+    /* =========================
+   SECTION
+========================= */
+    .orbit-section {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background:var(--gradient-1);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* =========================
+   CENTER CONTENT
+========================= */
+    .center-content {
+      position: absolute;
+      z-index: 10;
+      text-align: center;
+    }
+
+    .center-content h1 {
+      font-size: 55px;
+      color: #222;
+      margin-bottom: 10px;
+    }
+
+    .center-content p {
+      color: #666;
+      font-size: 18px;
+    }
+
+    /* =========================
+   ORBITS
+========================= */
+    .orbit {
+      position: absolute;
+      border: 1px dashed rgba(120, 120, 200, 0.2);
+      border-radius: 50%;
+      animation: rotate linear infinite;
+    }
+
+    /* ORBIT SIZES */
+    .orbit1 {
+      width: 350px;
+      height: 350px;
+      animation-duration: 30s;
+    }
+
+    .orbit2 {
+      width: 550px;
+      height: 550px;
+      animation-duration: 45s;
+    }
+
+    .orbit3 {
+      width: 750px;
+      height: 750px;
+      animation-duration: 60s;
+    }
+
+    /* =========================
+   COMPANY CIRCLE
+========================= */
+    .company {
+      width: 110px;
+      height: 110px;
+      background: #fff;
+      border-radius: 50%;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      overflow: hidden;
+      padding: 18px;
+    }
+
+    /* TEXT ROTATION FIX */
+    .company span,
+    .company img {
+      animation: counterRotate linear infinite;
+    }
+
+    .company img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      object-position: center;
+      max-width: 74px;
+      max-height: 74px;
+    }
+
+    .company span {
+      color: #061f4a;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .orbit1 .company span,
+    .orbit1 .company img {
+      animation-duration: 30s;
+    }
+
+    .orbit2 .company span,
+    .orbit2 .company img {
+      animation-duration: 45s;
+    }
+
+    .orbit3 .company span,
+    .orbit3 .company img {
+      animation-duration: 60s;
+    }
+
+    /* =========================
+   ORBIT 1 POSITIONS
+========================= */
+    .orbit1 .c1 {
+      top: -55px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .orbit1 .c2 {
+      right: -55px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .orbit1 .c3 {
+      bottom: -55px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .orbit1 .c4 {
+      left: -55px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    /* =========================
+   ORBIT 2 POSITIONS
+========================= */
+    .orbit2 .c1 {
+      top: -55px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .orbit2 .c2 {
+      right: 40px;
+      top: 70px;
+    }
+
+    .orbit2 .c3 {
+      right: -55px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .orbit2 .c4 {
+      bottom: 70px;
+      right: 40px;
+    }
+
+    .orbit2 .c5 {
+      bottom: -55px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .orbit2 .c6 {
+      left: 40px;
+      bottom: 70px;
+    }
+
+    .orbit2 .c7 {
+      left: -55px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .orbit2 .c8 {
+      left: 40px;
+      top: 70px;
+    }
+
+    /* =========================
+   ORBIT 3 POSITIONS
+========================= */
+    .orbit3 .c1 {
+      top: -55px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .orbit3 .c2 {
+      right: 60px;
+      top: 90px;
+    }
+
+    .orbit3 .c3 {
+      right: -55px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .orbit3 .c4 {
+      right: 60px;
+      bottom: 90px;
+    }
+
+    .orbit3 .c5 {
+      bottom: -55px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .orbit3 .c6 {
+      left: 60px;
+      bottom: 90px;
+    }
+
+    .orbit3 .c7 {
+      left: -55px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .orbit3 .c8 {
+      left: 60px;
+      top: 90px;
+    }
+
+    /* =========================
+   ANIMATION
+========================= */
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes counterRotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(-360deg);
+      }
+    }
+
+    /* =========================
+   RESPONSIVE
+========================= */
+    @media(max-width:768px) {
+
+      .orbit1 {
+        width: 220px;
+        height: 220px;
+      }
+
+      .orbit2 {
+        width: 350px;
+        height: 350px;
+      }
+
+      .orbit3 {
+        width: 500px;
+        height: 500px;
+      }
+
+      .company {
+        width: 70px;
+        height: 70px;
+        font-size: 10px;
+        padding: 12px;
+      }
+
+      .company img {
+        max-width: 46px;
+        max-height: 46px;
+      }
+
+      .center-content h1 {
+        font-size: 32px;
+      }
+
+      .center-content p {
+        font-size: 14px;
+      }
+    }
+
+    /* ══════════ FOOTER ══════════ */
+    .footer {
+      background: var(--bg-section);
+      border-top: 1px solid var(--glass-border);
+      padding: 4rem 2rem 2rem;
+    }
+
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .footer-about .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-about .footer-brand .brand-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1.1rem;
+    }
+
+    .footer-about .footer-brand h3 {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .footer-about p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .footer-social a {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+    }
+
+    .footer-social a:hover {
+      color: var(--primary-light);
+      border-color: var(--primary);
+      background: rgba(79, 70, 229, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .footer-col h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.25rem;
+      color: var(--text-primary);
+    }
+
+    .footer-col a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 0.6rem;
+      transition: all 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: var(--primary-light);
+      padding-left: 5px;
+    }
+
+    .footer-staff-login {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      transition: all 0.3s;
+      margin-top: 0.5rem;
+    }
+
+    .footer-staff-login:hover {
+      color: var(--accent-light);
+      border-color: rgba(245, 158, 11, 0.4);
+      background: rgba(245, 158, 11, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 2rem;
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-bottom p {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+    }
+
+    .footer-bottom a {
+      color: var(--primary-light);
+      text-decoration: none;
+    }
+
+    /* Animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .stagger>* {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .stagger.visible>*:nth-child(1) {
+      transition-delay: 0.05s;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stagger.visible>*:nth-child(2) {
+      transition-delay: 0.1s;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stagger.visible>*:nth-child(3) {
+      transition-delay: 0.15s;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stagger.visible>*:nth-child(4) {
+      transition-delay: 0.2s;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stagger.visible>*:nth-child(5) {
+      transition-delay: 0.25s;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stagger.visible>*:nth-child(6) {
+      transition-delay: 0.3s;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .back-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--gradient-1);
+      color: #fff;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: all 0.3s;
+      box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .back-to-top:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(79, 70, 229, 0.5);
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 72px;
+      left: 0;
+      right: 0;
+      background: rgba(10, 14, 26, 0.98);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 1.5rem;
+      z-index: 999;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mobile-menu.open {
+      display: flex;
+    }
+
+    .mobile-menu a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+
+    .mobile-menu a:hover {
+      color: var(--text-primary);
+      background: var(--glass-bg);
+    }
+
+    .mobile-menu .mobile-login-buttons {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--glass-border);
+    }
+
+    .mobile-menu .mobile-login-buttons a {
+      flex: 1;
+      text-align: center;
+      padding: 0.75rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    /* ══════════ RESPONSIVE ══════════ */
+    @media (max-width: 1024px) {
+      .slide-title {
+        font-size: 3rem;
+      }
+
+      .slide-content {
+        padding: 6rem 2rem 3rem;
+      }
+
+      .about-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+
+      .about-images {
+        height: 400px;
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 180px);
+      }
+
+      .gallery-item:nth-child(1) {
+        grid-column: span 2;
+      }
+
+      .gallery-item:nth-child(4) {
+        grid-row: span 1;
+      }
+
+      .section-header h2 {
+        font-size: 2.2rem;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 0 1.25rem;
+      }
+
+      .nav-center {
+        display: none;
+      }
+
+      .mobile-toggle {
+        display: block;
+      }
+
+      .nav-right .btn-text {
+        display: none;
+      }
+
+      .hero-slider {
+        min-height: 550px;
+      }
+
+      .slide-content {
+        padding: 6rem 1.5rem 5rem;
+      }
+
+      .slide-left {
+        max-width: 100%;
+      }
+
+      .slide-title {
+        font-size: 2.2rem;
+      }
+
+      .slide-desc {
+        font-size: 0.95rem;
+      }
+
+      .slide-buttons {
+        flex-direction: column;
+      }
+
+      .slide-buttons .btn-hero {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .slider-arrow {
+        width: 40px;
+        height: 40px;
+        font-size: 0.85rem;
+      }
+
+      .slider-arrow.prev {
+        left: 0.75rem;
+      }
+
+      .slider-arrow.next {
+        right: 0.75rem;
+      }
+
+      .section {
+        padding: 4rem 1.25rem;
+      }
+
+      .section-header h2 {
+        font-size: 1.9rem;
+      }
+
+      .about-text h2 {
+        font-size: 1.9rem;
+      }
+
+      .about-images {
+        height: 350px;
+      }
+
+      .about-img-1 {
+        width: 200px;
+        height: 240px;
+      }
+
+      .about-img-2 {
+        width: 180px;
+        height: 200px;
+      }
+
+      .about-img-3 {
+        width: 160px;
+        height: 140px;
+      }
+
+      .about-features {
+        grid-template-columns: 1fr;
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+
+      .gallery-item:nth-child(1) {
+        grid-column: span 1;
+      }
+
+      .gallery-item {
+        height: 200px;
+      }
+
+      .counter-number {
+        font-size: 2.2rem;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media print {
+      .no-print {
+        display: none;
+      }
+    }
+
+    /* Brand polish: GSPH navy, gold, and charcoal */
+    :root {
+      --primary: #061f4a;
+      --primary-light: #0b3f86;
+      --primary-dark: #031229;
+      --accent: #d5a948;
+      --accent-light: #f2d57c;
+      --bg-dark: #08111f;
+      --bg-section: #101a28;
+      --text-primary: #f8fafc;
+      --text-secondary: #b9c2cf;
+      --glass-border: rgba(213, 169, 72, 0.18);
+      --glass-bg: rgba(255, 255, 255, 0.07);
+      --success: #1ea672;
+      --gradient-1: linear-gradient(135deg, #061f4a 0%, #0b3f86 58%, #d5a948 100%);
+      --gradient-2: linear-gradient(135deg, #d5a948 0%, #f2d57c 52%, #0b3f86 100%);
+      --gradient-3: linear-gradient(135deg, #031229 0%, #061f4a 52%, #d5a948 100%);
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 16% 0%, rgba(213, 169, 72, 0.12), transparent 30rem),
+        linear-gradient(180deg, #08111f 0%, #0d1724 48%, #08111f 100%);
+    }
+
+    #loader {
+      background: linear-gradient(135deg, #031229 0%, #061f4a 58%, #1b2430 100%);
+    }
+
+    .navbar {
+      background: rgba(248, 250, 252, 0.94);
+      border-bottom: 1px solid rgba(6, 31, 74, 0.08);
+      box-shadow: 0 12px 35px rgba(6, 31, 74, 0.08);
+    }
+
+    .navbar.scrolled {
+      background: rgba(3, 18, 41, 0.96);
+      border-bottom-color: rgba(213, 169, 72, 0.26);
+    }
+
+    .brand-text h1,
+    .brand-text span,
+    .nav-center a {
+      color: #061f4a;
+    }
+
+    .navbar.scrolled .brand-text h1,
+    .navbar.scrolled .brand-text span,
+    .navbar.scrolled .nav-center a,
+    .navbar.scrolled .mobile-toggle {
+      color: #f8fafc;
+    }
+
+    .nav-center a:hover,
+    .nav-center a.active {
+      color: #061f4a;
+      background: rgba(213, 169, 72, 0.15);
+    }
+
+    .navbar.scrolled .nav-center a:hover,
+    .navbar.scrolled .nav-center a.active {
+      color: #f2d57c;
+      background: rgba(213, 169, 72, 0.12);
+    }
+
+    .imagtag {
+      width: 76px;
+      height: 56px;
+      flex: 0 0 76px;
+      padding: 4px;
+      border-radius: 10px;
+      background: #ffffff;
+      box-shadow: 0 8px 18px rgba(6, 31, 74, 0.14);
+      overflow: hidden;
+    }
+
+    .imagtag img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .btn-student-nav,
+    .btn-primary,
+    .back-to-top {
+      box-shadow: 0 12px 30px rgba(6, 31, 74, 0.22);
+    }
+
+    .btn-primary:hover,
+    .btn-student-nav:hover,
+    .back-to-top:hover {
+      box-shadow: 0 18px 42px rgba(213, 169, 72, 0.28);
+    }
+
+    .btn-accent {
+      background: linear-gradient(135deg, #d5a948, #f2d57c);
+      color: #061f4a;
+      box-shadow: 0 12px 30px rgba(213, 169, 72, 0.24);
+    }
+
+    .btn-outline {
+      border-color: rgba(242, 213, 124, 0.55);
+    }
+
+    .btn-outline:hover {
+      color: #061f4a;
+      background: #f2d57c;
+      border-color: #f2d57c;
+    }
+
+    .slide::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(90deg, rgba(3, 18, 41, 0.92) 0%, rgba(6, 31, 74, 0.78) 46%, rgba(6, 31, 74, 0.2) 100%),
+        radial-gradient(circle at 22% 44%, rgba(213, 169, 72, 0.18), transparent 26rem);
+      pointer-events: none;
+    }
+
+    .slide-bg {
+      filter: brightness(0.62) saturate(0.92);
+    }
+
+    .slide-badge {
+      color: #f2d57c;
+      background: rgba(213, 169, 72, 0.12);
+      border-color: rgba(242, 213, 124, 0.28);
+    }
+
+    .slide-title .gradient-text,
+    .section-header h2 .highlight,
+    .about-text h2 .highlight {
+      background: linear-gradient(135deg, #f2d57c 0%, #d5a948 42%, #73a8f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-alt {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
+        #101a28;
+    }
+
+    .dept-card,
+    .event-card,
+    .achievement-card,
+    .why-card,
+    .about-feature,
+    .about-float-card {
+      border-color: rgba(213, 169, 72, 0.16);
+      box-shadow: 0 18px 45px rgba(3, 18, 41, 0.22);
+    }
+
+    .dept-card::before {
+      background: radial-gradient(circle at 50% 0%, rgba(213, 169, 72, 0.18), transparent 70%);
+    }
+
+    .dept-card:nth-child(1) .dept-icon,
+    .dept-card:nth-child(4) .dept-icon,
+    .achievement-card:nth-child(1) .achievement-icon,
+    .achievement-card:nth-child(4) .achievement-icon {
+      background: linear-gradient(135deg, #061f4a, #0b3f86);
+      color: #f2d57c;
+    }
+
+    .dept-card:nth-child(2) .dept-icon,
+    .dept-card:nth-child(5) .dept-icon,
+    .achievement-card:nth-child(2) .achievement-icon {
+      background: linear-gradient(135deg, #d5a948, #f2d57c);
+      color: #061f4a;
+    }
+
+    .dept-card:nth-child(3) .dept-icon,
+    .dept-card:nth-child(6) .dept-icon,
+    .achievement-card:nth-child(3) .achievement-icon {
+      background: linear-gradient(135deg, #1b2430, #0b3f86);
+      color: #f2d57c;
+    }
+
+    .counters-bg {
+      background: linear-gradient(135deg, #031229 0%, #061f4a 54%, #d5a948 100%);
+      opacity: 1;
+    }
+
+    .orbit-section {
+      background:
+        radial-gradient(circle at center, rgba(213, 169, 72, 0.2), transparent 24rem),
+        linear-gradient(135deg, #061f4a 0%, #0b3f86 52%, #101a28 100%);
+    }
+
+    .center-content h1 {
+      color: #ffffff;
+    }
+
+    .center-content p {
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .company {
+      background: #ffffff;
+      border: 1px solid rgba(6, 31, 74, 0.12);
+      box-shadow: 0 18px 45px rgba(6, 31, 74, 0.12);
+    }
+
+    .company img {
+      filter: saturate(1.05) contrast(1.05);
+    }
+
+    .company span {
+      color: #061f4a;
+    }
+
+    .footer {
+      background: linear-gradient(180deg, #101a28 0%, #06111f 100%);
+      border-top-color: rgba(213, 169, 72, 0.18);
+    }
+
+    .footer-social a:hover,
+    .footer-col a:hover,
+    .footer-bottom a {
+      color: #f2d57c;
+    }
+
+    .footer-staff-login:hover {
+      color: #f2d57c;
+      border-color: rgba(242, 213, 124, 0.5);
+      background: rgba(213, 169, 72, 0.1);
+    }
+
+    .mobile-menu {
+      background: rgba(3, 18, 41, 0.98);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ═══ LAZY LOADER ═══ -->
+  <div id="loader">
+    <div class="loader-logo">
+      <img src="assets/college-logo.png" alt="College Logo">
+    </div>
+    <div class="loader-text">Loading</div>
+  </div>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <script>
+    function showLogoFallback(img, name) {
+      const fallback = document.createElement('span');
+      fallback.textContent = name;
+      img.replaceWith(fallback);
+    }
+  </script>
+
+  <nav class="navbar no-print" id="navbar">
+    <a href="#" class="brand">
+      <div class="imagtag"><img
+          src="assets/college-logo.png"
+          alt="GSPG College"></div>
+      <div class="brand-text">
+        <h1>GSPG College</h1><span>Excellence in Education</span>
+      </div>
+    </a>
+    <div class="nav-center">
+      <a href="#" class="active">Home</a>
+      <a href="#about">About</a>
+      <a href="#departments">Departments</a>
+      <a href="#achievements">Achievements</a>
+      <a href="#events">Events</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-right">
+      <a href="student/student.html" class="btn-login btn-student-nav"><i class="fas fa-user-graduate"></i><span
+          class="btn-text">Student Login</span></a>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu no-print" id="mobileMenu">
+    <a href="#">Home</a><a href="#about">About</a><a href="#departments">Departments</a><a
+      href="#achievements">Achievements</a><a href="#events">Events</a><a href="#contact">Contact</a>
+    <div class="mobile-login-buttons"><a href="student/student.html" class="btn-login btn-student-nav"
+        style="width:100%; justify-content:center;"><i class="fas fa-user-graduate"></i> Student Login</a></div>
+  </div>
+
+  <!-- ═══ HERO SLIDER ═══ -->
+  <section class="hero-slider no-print" id="heroSlider">
+    <div class="slide active">
+      <div class="slide-bg"
+        style="background-image: url('https://images.unsplash.com/photo-1562774053-701939374585?w=1600&q=80');"></div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-left">
+          <div class="slide-badge"><i class="fas fa-star"></i> NAAC A++ Accredited</div>
+          <h2 class="slide-title">Welcome to<br><span class="gradient-text">G.S.P.H University</span></h2>
+          <p class="slide-desc">Empowering the next generation of innovators with world-class education, cutting-edge
+            research, and holistic development since 1995.</p>
+          <div class="slide-buttons"><a href="student/student.html" class="btn btn-primary btn-hero"><i
+                class="fas fa-user-graduate"></i> Student Portal <span class="arrow">→</span></a><a href="#about"
+              class="btn btn-outline btn-hero">Explore More</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-bg"
+        style="background-image: url('https://th.bing.com/th/id/OIP.oG4mAH6W02B6popvuRuxHAHaD3?w=312&h=180&c=7&r=0&o=7&pid=1.7&rm=3');">
+      </div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-left">
+          <div class="slide-badge"><i class="fas fa-flask"></i> Research Excellence</div>
+          <h2 class="slide-title">State-of-the-Art<br><span class="gradient-text">Labs & Research Centers</span></h2>
+          <p class="slide-desc">50+ advanced laboratories, 12 research centers, and partnerships with leading global
+            institutions to drive innovation.</p>
+          <div class="slide-buttons"><a href="#achievements" class="btn btn-primary btn-hero"><i
+                class="fas fa-trophy"></i> Our Achievements <span class="arrow">→</span></a><a href="#stats"
+              class="btn btn-outline btn-hero">View Stats</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-bg"
+        style="background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1600&q=80');">
+      </div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-left">
+          <div class="slide-badge"><i class="fas fa-trophy"></i> #1 in State Rankings</div>
+          <h2 class="slide-title">Shaping Future<br><span class="gradient-text">Leaders & Innovators</span></h2>
+          <p class="slide-desc">95% placement rate, 500+ recruiting companies, and alumni leading at Fortune 500
+            companies worldwide.</p>
+          <div class="slide-buttons"><a href="student/student.html" class="btn btn-primary btn-hero"><i
+                class="fas fa-sign-in-alt"></i> Get Started <span class="arrow">→</span></a><a href="#stats"
+              class="btn btn-outline btn-hero">View Statistics</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-bg"
+        style="background-image: url('https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=1600&q=80');">
+      </div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-left">
+          <div class="slide-badge"><i class="fas fa-laptop-code"></i> Digital Campus</div>
+          <h2 class="slide-title">Complete Digital<br><span class="gradient-text">Campus Management</span></h2>
+          <p class="slide-desc">Everything you need — attendance, marks, timetables, fees, library — all accessible from
+            one unified platform.</p>
+          <div class="slide-buttons"><a href="student/student.html" class="btn btn-primary btn-hero"><i
+                class="fas fa-user-graduate"></i> Student Login <span class="arrow">→</span></a><a href="#departments"
+              class="btn btn-outline btn-hero">Departments</a></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="slider-arrow prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+    <button class="slider-arrow next" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
+    <div class="slider-controls">
+      <div class="slider-dots" id="sliderDots"></div>
+    </div>
+    <div class="slider-progress" id="sliderProgress"></div>
+  </section>
+
+  <!-- ═══ ABOUT CAMPUS ═══ -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-images reveal-left">
+          <div class="about-img about-img-1">
+            <img src="https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=600&q=80" alt="Campus Building" />
+          </div>
+          <div class="about-img about-img-2">
+            <img src="assets\WhatsApp Image 2026-05-21 at 11.01.46 AM.jpeg" alt="Students" />
+          </div>
+          <div class="about-img about-img-3">
+            <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?w=600&q=80" alt="Library" />
+          </div>
+          <div class="about-float-card">
+            <div class="afc-icon">🏆</div>
+            <div class="afc-text">
+              <div class="afc-num">29+</div>
+              <div class="afc-label">Years of Excellence</div>
+            </div>
+          </div>
+        </div>
+        <div class="about-text reveal-right">
+          <div class="about-tag"><i class="fas fa-university"></i> About Our College</div>
+          <h2>Building Tomorrow's <span class="highlight">Leaders</span> Today</h2>
+          <p>GSPG College has been at the forefront of technical education since 1995. Our campus
+            blends tradition with innovation, offering students a transformative experience.</p>
+          <p>With state-of-the-art infrastructure, a vibrant campus life, and a commitment to research, we provide an
+            environment where students can thrive academically and personally.</p>
+          <div class="about-features">
+            <div class="about-feature">
+              <div class="af-icon">🏫</div>
+              <div>
+                <h4>Smart Campus</h4>
+                <p>50-acre Wi-Fi enabled green campus</p>
+              </div>
+            </div>
+            <div class="about-feature">
+              <div class="af-icon">👨‍🏫</div>
+              <div>
+                <h4>Expert Faculty</h4>
+                <p>250+ PhD holders & industry experts</p>
+              </div>
+            </div>
+            <div class="about-feature">
+              <div class="af-icon">🔬</div>
+              <div>
+                <h4>Research Driven</h4>
+                <p>12 centers of excellence</p>
+              </div>
+            </div>
+            <div class="about-feature">
+              <div class="af-icon">🌐</div>
+              <div>
+                <h4>Global Tie-ups</h4>
+                <p>30+ international collaborations</p>
+              </div>
+            </div>
+          </div>
+          <a href="#departments" class="btn btn-primary" style="width: auto;"><i class="fas fa-arrow-right"></i> Explore
+            Departments</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ DEPARTMENTS ═══ -->
+  <section class="section section-alt" id="departments">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="overline">Academic Wings</div>
+        <h2>Our <span class="highlight">Departments</span></h2>
+        <p>Six world-class departments offering cutting-edge programs designed for the industries of tomorrow.</p>
+      </div>
+      <div class="dept-grid stagger">
+        <div class="dept-card">
+          <div class="dept-icon">💻</div>
+          <h3>Computer Science</h3>
+          <p>AI, ML, Cybersecurity, Cloud Computing & Full-Stack Development</p>
+          <div class="dept-meta"><span><i class="fas fa-users"></i> 800+</span><span><i class="fas fa-book"></i> 12
+              Programs</span></div>
+        </div>
+        <div class="dept-card">
+          <div class="dept-icon">⚡</div>
+          <h3>Electronics & Comm.</h3>
+          <p>VLSI Design, IoT, Embedded Systems & Signal Processing</p>
+          <div class="dept-meta"><span><i class="fas fa-users"></i> 600+</span><span><i class="fas fa-book"></i> 8
+              Programs</span></div>
+        </div>
+        <div class="dept-card">
+          <div class="dept-icon">🔧</div>
+          <h3>Mechanical Engg.</h3>
+          <p>Robotics, Thermal Systems, CAD/CAM & Additive Manufacturing</p>
+          <div class="dept-meta"><span><i class="fas fa-users"></i> 500+</span><span><i class="fas fa-book"></i> 7
+              Programs</span></div>
+        </div>
+      
+        <div class="dept-card">
+          <div class="dept-icon">📐</div>
+          <h3>Civil Engineering</h3>
+          <p>Structural Design, Sustainability, Smart Cities & GIS</p>
+          <div class="dept-meta"><span><i class="fas fa-users"></i> 400+</span><span><i class="fas fa-book"></i> 6
+              Programs</span></div>
+        </div>
+        <div class="dept-card">
+          <div class="dept-icon">📊</div>
+          <h3>Data Science</h3>
+          <p>Big Data Analytics, NLP, Deep Learning & Business Intelligence</p>
+          <div class="dept-meta"><span><i class="fas fa-users"></i> 350+</span><span><i class="fas fa-book"></i> 4
+              Programs</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CAMPUS GALLERY ═══ -->
+  <section class="section" id="gallery">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="overline">Campus Life</div>
+        <h2>Experience Our <span class="highlight">Campus</span></h2>
+        <p>A vibrant ecosystem of learning, innovation, sports, and cultural activities.</p>
+      </div>
+      <div class="gallery-grid stagger">
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1562774053-701939374585?w=800&q=80" alt="Main Building" />
+          <div class="gallery-label">
+            <h4>Main Academic Block</h4>
+            <p>Heritage architecture meets modern design</p>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1519452635265-7b1fbfd1e4e0?w=600&q=80" alt="Library" />
+          <div class="gallery-label">
+            <h4>Central Library</h4>
+            <p>1 Lakh+ books & digital resources</p>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=600&q=80" alt="Lab" />
+          <div class="gallery-label">
+            <h4>Research Lab</h4>
+            <p>50+ cutting-edge laboratories</p>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&q=80" alt="Sports" />
+          <div class="gallery-label">
+            <h4>Sports Complex</h4>
+            <p>Indoor & outdoor world-class facilities</p>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=600&q=80" alt="Events" />
+          <div class="gallery-label">
+            <h4>Cultural Fest</h4>
+            <p>Annual flagship events & celebrations</p>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img src="data:image/jpeg;base64,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" alt="Main Building" />
+          <div class="gallery-label">
+            <h4>Main Academic Block</h4>
+            <p>Heritage architecture meets modern design</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ACHIEVEMENTS ═══ -->
+  <section class="section section-alt" id="achievements">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="overline">Our Pride</div>
+        <h2>College <span class="highlight">Achievements</span></h2>
+        <p>A legacy of excellence spanning three decades of academic brilliance and holistic development.</p>
+      </div>
+      <div class="achievements-grid stagger">
+        <div class="achievement-card">
+          <div class="ach-inner">
+            <div class="achievement-icon"><i class="fas fa-award"></i></div>
+            <h3>NAAC A++ Accreditation</h3>
+            <p>Recognized with the highest grade by NAAC for academic excellence and infrastructure.</p><span
+              class="ach-year">🏆 Awarded 2023</span>
+          </div>
+        </div>
+        <div class="achievement-card">
+          <div class="ach-inner">
+            <div class="achievement-icon"><i class="fas fa-ranking-star"></i></div>
+            <h3>NIRF Top 50 Ranking</h3>
+            <p>Consistently ranked among the top 50 engineering institutions in India by NIRF.</p><span
+              class="ach-year">📊 Since 2020</span>
+          </div>
+        </div>
+        <div class="achievement-card">
+          <div class="ach-inner">
+            <div class="achievement-icon"><i class="fas fa-microscope"></i></div>
+            <h3>₹25 Cr Research Grants</h3>
+            <p>Secured over ₹25 crore in research funding from DST, DRDO, and international organizations.</p><span
+              class="ach-year">🔬 2022-2024</span>
+          </div>
+        </div>
+        <div class="achievement-card">
+          <div class="ach-inner">
+            <div class="achievement-icon"><i class="fas fa-medal"></i></div>
+            <h3>National Sports Champions</h3>
+            <p>Won 15+ gold medals in inter-university sports championships.</p><span class="ach-year">🥇 2024
+              Season</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ COUNTERS ═══ -->
+  <section class="section counters-section" id="stats">
+    <div class="counters-bg"></div>
+    <div class="container counters-content">
+      <div class="section-header reveal" style="margin-bottom: 3rem">
+        <div class="overline" style="color: rgba(255,255,255,0.8)">By the Numbers</div>
+        <h2 style="color: #fff">Our Impact in <span
+            style="background: linear-gradient(135deg, #fbbf24, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Numbers</span>
+        </h2>
+      </div>
+      <div class="counters-grid stagger" id="countersGrid">
+        <div class="counter-item">
+          <div class="counter-icon"><i class="fas fa-user-graduate"></i></div>
+          <div class="counter-number"><span class="count" data-target="5000">0</span><span
+              class="counter-suffix">+</span></div>
+          <div class="counter-divider"></div>
+          <div class="counter-label">Students Enrolled</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+          <div class="counter-number"><span class="count" data-target="250">0</span><span
+              class="counter-suffix">+</span></div>
+          <div class="counter-divider"></div>
+          <div class="counter-label">Expert Faculty</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-icon"><i class="fas fa-briefcase"></i></div>
+          <div class="counter-number"><span class="count" data-target="95">0</span><span class="counter-suffix">%</span>
+          </div>
+          <div class="counter-divider"></div>
+          <div class="counter-label">Placement Rate</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-icon"><i class="fas fa-building"></i></div>
+          <div class="counter-number"><span class="count" data-target="500">0</span><span
+              class="counter-suffix">+</span></div>
+          <div class="counter-divider"></div>
+          <div class="counter-label">Recruiters</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-icon"><i class="fas fa-book-open"></i></div>
+          <div class="counter-number"><span class="count" data-target="60">0</span><span class="counter-suffix">+</span>
+          </div>
+          <div class="counter-divider"></div>
+          <div class="counter-label">Courses Offered</div>
+        </div>
+      
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ EVENTS & NEWS ═══ -->
+  <section class="section" id="events">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="overline">Stay Updated</div>
+        <h2>Latest <span class="highlight">Events & News</span></h2>
+        <p>What's happening on campus — upcoming events, announcements, and highlights.</p>
+      </div>
+      <div class="events-grid stagger">
+        <div class="event-card">
+          <div class="event-img">
+            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80" alt="Tech Fest" />
+            <div class="event-date">
+              <div class="ed-day">15</div>
+              <div class="ed-month">Mar</div>
+            </div>
+            <div class="event-tag upcoming">Upcoming</div>
+          </div>
+          <div class="event-body">
+            <h3>TechXplore 2025 — Annual Tech Fest</h3>
+            <p>3-day extravaganza featuring hackathons, workshops, keynotes by industry leaders, and ₹5L+ in prizes.</p>
+            <div class="event-meta"><span><i class="fas fa-map-marker-alt"></i> Main Auditorium</span><span><i
+                  class="fas fa-clock"></i> 9 AM</span><a href="#">Read More <i class="fas fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="event-card">
+          <div class="event-img">
+            <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&q=80" alt="Placement Drive" />
+            <div class="event-date">
+              <div class="ed-day">22</div>
+              <div class="ed-month">Mar</div>
+            </div>
+            <div class="event-tag upcoming">Upcoming</div>
+          </div>
+          <div class="event-body">
+            <h3>Mega Placement Drive 2025</h3>
+            <p>50+ companies visiting campus for recruitment. Prepare for on-spot interviews and dream offers.</p>
+            <div class="event-meta"><span><i class="fas fa-map-marker-alt"></i> Placement Cell</span><span><i
+                  class="fas fa-clock"></i> 10 AM</span><a href="#">Read More <i class="fas fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="event-card">
+          <div class="event-img">
+            <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80" alt="Conference" />
+            <div class="event-date">
+              <div class="ed-day">05</div>
+              <div class="ed-month">Feb</div>
+            </div>
+            <div class="event-tag news">News</div>
+          </div>
+          <div class="event-body">
+            <h3>International AI Research Conference</h3>
+            <p>Our faculty presented 8 papers at the International Conference on AI & Machine Learning in Singapore.</p>
+            <div class="event-meta"><span><i class="fas fa-map-marker-alt"></i> Singapore</span><span><i
+                  class="fas fa-calendar"></i> Feb 2025</span><a href="#">Read More <i
+                  class="fas fa-arrow-right"></i></a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ WHY CHOOSE US ═══ -->
+  <section class="section section-alt" id="whyus">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="overline">Why Choose Us</div>
+        <h2>What Makes Us <span class="highlight">Different</span></h2>
+        <p>Our commitment to holistic education sets us apart from the rest.</p>
+      </div>
+      <div class="why-grid stagger">
+        <div class="why-card">
+          <div class="why-icon">🏛️</div>
+          <h3>World-Class Campus</h3>
+          <p>50-acre green campus with modern infrastructure, smart classrooms, and 24/7 Wi-Fi.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🧪</div>
+          <h3>Research Focus</h3>
+          <p>12 dedicated research centers with industry partnerships driving innovation.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🌍</div>
+          <h3>Global Exposure</h3>
+          <p>Student exchange programs with 30+ international universities across 15 countries.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">💼</div>
+          <h3>Industry Connect</h3>
+          <p>MoUs with 200+ companies for internships, live projects, and placements.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="orbit-section">
+
+    <!-- CENTER CONTENT -->
+    <div class="center-content">
+      <h1>600+</h1>
+      <p>Companies Hiring Worldwide</p>
+    </div>
+
+    <!-- ORBIT 1 -->
+    <div class="orbit orbit1">
+
+      <div class="company c1">
+        <img src="https://logo.clearbit.com/hcltech.com" alt="HCL logo" title="HCL" loading="lazy" onerror="showLogoFallback(this, 'HCL')">
+      </div>
+
+      <div class="company c2">
+        <img src="https://logo.clearbit.com/tcs.com" alt="TCS logo" title="TCS" loading="lazy" onerror="showLogoFallback(this, 'TCS')">
+      </div>
+
+      <div class="company c3">
+        <img src="https://logo.clearbit.com/wipro.com" alt="Wipro logo" title="Wipro" loading="lazy" onerror="showLogoFallback(this, 'Wipro')">
+      </div>
+
+      <div class="company c4">
+        <img src="https://logo.clearbit.com/ibm.com" alt="IBM logo" title="IBM" loading="lazy" onerror="showLogoFallback(this, 'IBM')">
+      </div>
+
+    </div>
+
+    <!-- ORBIT 2 -->
+    <div class="orbit orbit2">
+
+      <div class="company c1"><img src="data:image/webp;base64,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" alt="Infosys logo" title="Infosys" loading="lazy" onerror="showLogoFallback(this, 'Infosys')"></div>
+      <div class="company c2"><img src="data:image/webp;base64,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" alt="Google logo" title="Google" loading="lazy" onerror="showLogoFallback(this, 'Google')"></div>
+      <div class="company c3"><img src="https://static.vecteezy.com/system/resources/previews/022/424/614/original/apple-logo-black-isolated-on-white-background-free-vector.jpg" alt="Apple logo" title="Apple" loading="lazy" onerror="showLogoFallback(this, 'Apple')"></div>
+      <div class="company c4"><img src="https://i.pinimg.com/originals/06/28/7e/06287ea10082eb312719c7b5fc4456df.png" alt="Amazon logo" title="Amazon" loading="lazy" onerror="showLogoFallback(this, 'Amazon')"></div>
+      <div class="company c5"><img src="https://th.bing.com/th/id/OIP.N6q1UQrBEZ2PVWg-HcjjyQHaHa?w=178&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Meta logo" title="Meta" loading="lazy" onerror="showLogoFallback(this, 'Meta')"></div>
+      <div class="company c6"><img src="data:image/webp;base64,UklGRnAJAABXRUJQVlA4IGQJAAAwMACdASq3ALYAPp1KoEulpCMhpBR6yLATiWRu/GMvHls6op1/8qvxy+Xeqv3f8H8e6ZLsc/f/cB89v7l/mfYn5gn6o/q91h/MJ+v3/U/4HvZeln/BfYB8gH9h/3PWT+gB+3Ppo/tl8Jn7e/tz7RH/qzmLsV/1X9D5nA/X/WeYnejtZ7t6AD6v8RP151mGgB4df0953PqD2Ef1/9MP2Gftr7FX7KE+beZsQGkGFc/RDhANbq7AVb19tAg/XwhAUBsCvPTBD5VdToTjaiUdDduAhLi2qLfkwOKg0Re/Md8XtO46inZcYEL6EC6mkKi0taAoQkb+iBkLHUoRQ3ISD2IpomVKM9l05IrKl+MV4RDUe94oV81iqwNCybEKJSgUGrX4+i+meAowX4EZ6nsSFLo1vze2yaqEPVgdRfNXU2lo6FFRKZSrKOH01AoQd29bEGhzEHEwFINgckYZLeezXLqCkbm/zuo7wY8f54w/HjqYDkXhUjrh7/v9tKq22VvM2IDSDCufohwgGuXQAP75sQAAABIMbdvudFBNINJ9fYz/WFHcX8QVeXgkaNr3kUj53/xKDbdyCkh3rY4S29D0PGTwnxy0gJ4oClkFP2W4T8pUh0N2acXrK4ao/+HfDPMGeToKThpFQmqpl4IRN8XtDatoR/YzJGp1GpuG0sFM0x79R/ze51mvtXyw9d7cgWVbqBcYBxHwU8QjAUCCZLcVZzPxGs4XXY+7NF2o5X3L1u+8gFIPLpfkQm3/Z+nYKc6LTSFbNH35DJ7afvTfntvazvl2wv+ax7XWp7MJruCRSJRGwNJR1ro4Lu5xFfV8PzhNABL+J8+IRKoWYeGSUhw6RX49A0pkbKk8tlOKuaiihbrAa8K+SvB5vopAtCKqJbk34DuLjkZxw19l605QIVwAfRrWVRFVWg2LJgO6/FE4Ozs3lLlBNROLbe4m3Ti21/kiuOXVcw72XX+GDKpfGENqLLGoZOtZK3mRjdBHDFTb5yI59L10Bn3p8w/EWqj4uspQiiAZnUrzmzV/zS97uKQ3YuEIjvc/3aYgL3MjBpEC6kIZWWBchkKm92sFWaNKlAGUdJKeiqa/8uDCslMiJyYj7HlktcaDUUx4FbVcQ+TloRhhEMn5wTfMQv5ENZMUjkALzRCFbkVeGWFIxSDZ7sNmnbgrhZCnjn5Jxya0zQAAnpC6aoXqSn99wt3eV8e1QuXWeu/DH9N8c23zR9cZmH09mc446jlzNNIYXGHi+CoWsFzqwz9SKuDpwUpCfzDVHaCD63JbVOF1wbOT1hyEATgTolrr9BJOuY2G0yL/kx21GEQekcRLeeP3YMhZ/r/+qO7uC0jbwJVAm5jiVw5npqVZ9GwVq2NUW4Jvwhooj4dfUv0ptm/XFg6lsw3IFSHtXfEWo/4eJVfIny5GL4x/YFD3TaxOF8VISERvEQDn0In5I88EZIRuIIS0+w7exN2sIvgOQnT6xwECJXYWqVX3wEo5gPBE/VMfhyNd6KGWd+hAv2iL9op3w4rXxdFzYew8uyuQPNy6hfJ+FIpAszP7JoyN5dg4tUDh51eehSZJZ2uAGUTu2Ip72Owiq8v/DgMVH03j1YqQGaDsnTqx+jbkrKrbCzuQAHvfm/yLYOm10eiPyEqhWmwcStJHxk6M4F6/T8VCptt5baH3/G76A/84LVGTXDyc5BfNYb1uXEacvo78z6MLm5j11+8CiqRoTP5aPGOgd1jG0l+NIuFnwmdXl/z9h4CbbELYW6ttKUgMlLGDee7rgYZs38x4PPBu9asefBdS2fYCzhukZsfjuNpY3JmGKlt6sorq/ZW8Iow++oqg7kubZBep3Lq41tB6bsZKncHC+AT8rv6lfSj5LJjrqphjROqsBl9kn6puq97IE5M2x0fHipF9pm/1KrneeQaw9B4N0dv+0hmfAtxK4gJdWM0hPImfoSxxPTgKwxrrYGFeBZ+Pc8mBGjTwbdfjx85/GOHiVzv4qJnlpFl+g1kDeMvJi9fxNx6ZGOrQDfYtYODmIXW/ybonWpsgwICA1Pf927Cw4IBk40Drsv4KlZmKrQYt+HMRlNMvPnxbW20AsQ0+FWuGk5R4wFRu3XCizvclycvH7PdZMj9Z+ZaOTswrOzEHRpvmhDESETBmVWKiwfgelBG+edvXrnxpeIdbWeN4Fvpe0ygrNY3VICXkisCTWKg1dPgGbmy4pTbznWtZw9nWK2MGV/StDuT68JG/PmgSdfuogBs1df8aW/4azGCcdoYzM1qAz2XFn4ARG1fwDhKf6ylJGB4xhNI1AEINRRbKdFIXnjlT8D8hYCiNTXrwcvidGvwAh/mlAg0o/+mcGg4TpZsBzqU+1RMX33XTEW8a9DmZuWxAzTxkMLIrBa3YWZcQTdq76BMHTeqnkVdHBactZjOZTNJvTT+vv4LRMaXYU9sfUvNIHv0nsG0NNfyTvXzc4ERy1pev/LMmOobaAhs6n45C5UvWWRHG0N/43jvjGw10jC7jxvNpmG1t8pPz5zpO9KEbpnVO8Q4SmiMT048YhKe4HqXRX9cR8QK2vBOYt4HdaG2Cb5Xeupmq3XnO43d0tInMKcA9PMGIbDV5w0ItAVEvK801WDdgdIPGW8S8DuPGObgul/LRA7JCgpMmcdVhFhrd4Z9tf2ST/4Qq/rippEMGEaIYoS/4RhgtyetiVMO0P5fZAXwrg/Rn/GM2tBsDWBWl0eWa9A+GbVcrkuEjx5yTcQxC49JMm3DmCzMX4fWCtUYMSoUKF6KhKEzIwy7H1kUb9FcscuHnUzlMr563gcDj/7v7hn8DgPiT8DOsAfdCi4zEeg8Uk9WUiZiuBMPk5Pl92em6+NzVbSor79Hdjhr/QdNswziilbXQ7qeDmQE/0emEB9+T6uJFOPJkW2vH4RcC34xBnJEBqId/8bBOrq5Tdemph3vZyg9/6/H/oPaA5qhU0BFhLYy/A2WYBKa2UQdZaYofLpSnC8rOOwvB4W0bCDMyGLMGT8JJMumg8ZmfmXymVFdbtIMMOptKcMVtZnIHeT4OKz2EpAwjzzL+htVbPatTcKfyB2cVDaSnii6SyYJPTKHko0D6dRNnio34HZr2s+DPccAwsrGNn667E6it8p2ebOegJBMDbHzm6yA6plBut5aOJGbhOqxx6GkE8ye22tbTPGJfVjSdGY/bOT/Sy4YpHKpQP3QlMgHqASOAAAAAAAAA" alt="Oracle logo" title="Oracle" loading="lazy" onerror="showLogoFallback(this, 'Oracle')"></div>
+      <div class="company c7"><img src="https://www.paloaltonetworks.com/content/dam/pan/en_US/images/logos/accenture-logo.png" alt="Accenture logo" title="Accenture" loading="lazy" onerror="showLogoFallback(this, 'Accenture')"></div>
+      <div class="company c8"><img src="https://th.bing.com/th/id/OIP.RrC7UJzLCakVQrdu2WrvRwHaEo?w=272&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Dell logo" title="Dell" loading="lazy" onerror="showLogoFallback(this, 'Dell')"></div>
+
+    </div>
+
+    <!-- ORBIT 3 -->
+    <div class="orbit orbit3">
+
+      <div class="company c1"><img src="https://www.bing.com/th/id/OIP.04exajoGlaLAE-Ogele-6AHaEK?w=536&h=270&c=8&rs=1&qlt=90&r=0&o=6&dpr=1.3&pid=3.1&rm=2" alt="Vodafone logo" title="Vodafone" loading="lazy" onerror="showLogoFallback(this, 'Vodafone')"></div>
+      <div class="company c2"><img src="https://logo.clearbit.com/techmahindra.com" alt="Tech Mahindra logo" title="Tech Mahindra" loading="lazy" onerror="showLogoFallback(this, 'Tech Mahindra')"></div>
+      <div class="company c3"><img src="https://logo.clearbit.com/atos.net" alt="Syntel logo" title="Syntel" loading="lazy" onerror="showLogoFallback(this, 'Syntel')"></div>
+      <div class="company c4"><img src="https://tse2.mm.bing.net/th/id/OIP.-qsHehf9bna9qR0ScEFP7gHaDA?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Capgemini logo" title="Capgemini" loading="lazy" onerror="showLogoFallback(this, 'Capgemini')"></div>
+      <div class="company c5"><img src="https://logo.clearbit.com/cognizant.com" alt="Cognizant logo" title="Cognizant" loading="lazy" onerror="showLogoFallback(this, 'Cognizant')"></div>
+      <div class="company c6"><img src="https://logo.clearbit.com/microsoft.com" alt="Microsoft logo" title="Microsoft" loading="lazy" onerror="showLogoFallback(this, 'Microsoft')"></div>
+      <div class="company c7"><img src="https://logo.clearbit.com/samsung.com" alt="Samsung logo" title="Samsung" loading="lazy" onerror="showLogoFallback(this, 'Samsung')"></div>
+      <div class="company c8"><img src="https://logo.clearbit.com/sony.com" alt="Sony logo" title="Sony" loading="lazy" onerror="showLogoFallback(this, 'Sony')"></div>
+
+    </div>
+  </section>
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer no-print" id="contact">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <div class="footer-brand">
+          <div class="brand-icon">🏛️</div>
+          <h3>G.S.P.H UNIVERSITY</h3>
+        </div>
+        <p>Established in 1995, committed to nurturing talented minds and building leaders of tomorrow.</p>
+        <div class="footer-social">
+          <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i
+              class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i
+              class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4><a href="#">About Us</a><a href="#">Admissions</a><a href="#">Academics</a><a
+          href="#">Placements</a><a href="#">Research</a>
+      </div>
+      <div class="footer-col">
+        <h4>Portals</h4><a href="student/student.html"><i class="fas fa-user-graduate"></i> Student Login</a><a href="#">Library Portal</a><a href="#">Exam Portal</a><a href="#">Alumni Network</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4><a href="#"><i class="fas fa-map-marker-alt"></i> Mumbai, India</a><a href="#"><i
+            class="fas fa-phone"></i> +91 22 2345 6789</a><a href="#"><i class="fas fa-envelope"></i>
+          info@gspg.edu.in</a><a href="#"><i class="fas fa-clock"></i> Mon–Sat: 8AM–6PM</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 GSPG College — All rights reserved.</p>
+      <p><a href="#">Privacy Policy</a> · <a href="#">Terms</a> · <a href="#">Sitemap</a> · <a href="admin/index.html"
+          style="color: var(--text-secondary); opacity: 0.5; font-size: 0.72rem; margin-left: 0.5rem;"
+          title="Staff Portal"><i class="fas fa-lock"></i> Staff Access</a></p>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i
+      class="fas fa-arrow-up"></i></button>
+
+  <script>
+    /* ══════════ LOADER ══════════ */
+    window.addEventListener('load', function() {
+      const loader = document.getElementById('loader');
+      if (!loader) return;
+
+      setTimeout(function() {
+        loader.classList.add('hidden');
+        setTimeout(function() {
+          loader.remove();
+        }, 650);
+      }, 700);
+    });
+
+    /* ══════════ SLIDER ══════════ */
+    const slides = document.querySelectorAll(".slide");
+    const dotsContainer = document.getElementById("sliderDots");
+    const progressBar = document.getElementById("sliderProgress");
+    let currentSlide = 0, slideInterval;
+    const SLIDE_DURATION = 7000;
+    let progressStart, progressRAF;
+
+    slides.forEach((_, i) => {
+      const dot = document.createElement("div");
+      dot.className = `slider-dot${i === 0 ? " active" : ""}`;
+      dot.onclick = () => { goToSlide(i); resetAutoSlide(); };
+      dotsContainer.appendChild(dot);
+    });
+
+    function goToSlide(index) {
+      slides[currentSlide].classList.remove("active");
+      dotsContainer.children[currentSlide].classList.remove("active");
+      currentSlide = index;
+      slides[currentSlide].classList.add("active");
+      dotsContainer.children[currentSlide].classList.add("active");
+      resetProgress();
+    }
+    function changeSlide(dir) { goToSlide((currentSlide + dir + slides.length) % slides.length); resetAutoSlide(); }
+    function resetAutoSlide() { clearInterval(slideInterval); slideInterval = setInterval(() => changeSlide(1), SLIDE_DURATION); }
+    function resetProgress() { cancelAnimationFrame(progressRAF); progressBar.style.width = "0%"; progressStart = performance.now(); animateProgress(); }
+    function animateProgress() { const pct = Math.min(((performance.now() - progressStart) / SLIDE_DURATION) * 100, 100); progressBar.style.width = pct + "%"; if (pct < 100) progressRAF = requestAnimationFrame(animateProgress); }
+    resetAutoSlide(); resetProgress();
+
+    const heroSlider = document.getElementById("heroSlider");
+    heroSlider.addEventListener("mouseenter", () => { clearInterval(slideInterval); cancelAnimationFrame(progressRAF); });
+    heroSlider.addEventListener("mouseleave", () => { resetAutoSlide(); resetProgress(); });
+    let touchStartX = 0;
+    heroSlider.addEventListener("touchstart", e => { touchStartX = e.touches[0].clientX; });
+    heroSlider.addEventListener("touchend", e => { const d = touchStartX - e.changedTouches[0].clientX; if (Math.abs(d) > 50) changeSlide(d > 0 ? 1 : -1); });
+    document.addEventListener("keydown", e => { if (e.key === "ArrowLeft") changeSlide(-1); if (e.key === "ArrowRight") changeSlide(1); });
+
+    /* ══════════ NAVBAR ══════════ */
+    const navbar = document.getElementById("navbar");
+    const backToTop = document.getElementById("backToTop");
+    window.addEventListener("scroll", () => { navbar.classList.toggle("scrolled", scrollY > 50); backToTop.classList.toggle("visible", scrollY > 500); });
+
+    /* ══════════ MOBILE ══════════ */
+    const mobileToggle = document.getElementById("mobileToggle");
+    const mobileMenu = document.getElementById("mobileMenu");
+    mobileToggle.addEventListener("click", () => { mobileMenu.classList.toggle("open"); mobileToggle.querySelector("i").className = mobileMenu.classList.contains("open") ? "fas fa-times" : "fas fa-bars"; });
+    mobileMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => { mobileMenu.classList.remove("open"); mobileToggle.querySelector("i").className = "fas fa-bars"; }));
+
+    /* ══════════ REVEAL ══════════ */
+    const revealObserver = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); }); }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    document.querySelectorAll(".reveal, .reveal-left, .reveal-right, .stagger").forEach(el => revealObserver.observe(el));
+
+    /* ══════════ COUNTERS ══════════ */
+    let counterStarted = false;
+    function animateCounters() {
+      if (counterStarted) return; counterStarted = true;
+      document.querySelectorAll(".count").forEach(el => {
+        const target = +el.dataset.target, duration = 2500, start = performance.now();
+        function easeOut(t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); }
+        (function update(now) { const p = Math.min((now - start) / duration, 1); el.textContent = Math.floor(easeOut(p) * target); if (p < 1) requestAnimationFrame(update); else el.textContent = target; })(start);
+      });
+    }
+    new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) animateCounters(); }); }, { threshold: 0.3 }).observe(document.getElementById("countersGrid"));
+
+    /* ══════════ SMOOTH SCROLL ══════════ */
+    document.querySelectorAll('a[href^="#"]').forEach(link => { link.addEventListener("click", e => { const id = link.getAttribute("href"); if (id === "#") return; e.preventDefault(); const t = document.querySelector(id); if (t) window.scrollTo({ top: t.offsetTop - 72, behavior: "smooth" }); }); });
+  </script>
+  <script src="script.js"></script>
+</body>
+
+</html>

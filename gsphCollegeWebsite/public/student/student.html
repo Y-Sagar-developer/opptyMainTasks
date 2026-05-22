@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#061f4a" />
+  <title>Student Login | GSPG College</title>
+  <link rel="stylesheet" href="../mobile-responsive.css" />
+  <style>
+    /* ===== Reset & Base ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #333;
+      min-height: 100vh;
+    }
+
+    /* Only hide overflow on login page */
+    body.login-page {
+      overflow: hidden;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ══════════ LAZY LOADING SCREEN ══════════ */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 50%, #0f172a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader-logo {
+      width: min(280px, 72vw);
+      height: 186px;
+      animation: logoFloat 2s ease-in-out infinite;
+    }
+
+    .loader-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 16px;
+      filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
+    }
+
+    @keyframes logoFloat {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    /* ===== Theme Toggle ===== */
+
+    /* ===== Toast Container ===== */
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* ===== Login Page with Banner ===== */
+    .auth-page {
+
+      position: relative;
+      z-index: 1;
+
+      min-height: 100vh;
+      height: 100vh;
+      width: 100%;
+      background: url("../assets/foundation-banner.png") no-repeat center center;
+
+      background-size: 85% auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      padding: 0;
+    }
+
+    .auth-page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+       width: 300px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.12); /* lower = more transparent */
+  backdrop-filter: blur(8px);            /* adjust blur here */
+  border-radius: 15px;
+  border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===== Login Card ===== */
+    .auth-card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.96);
+      width: 380px;
+      max-width: 380px;
+      height: 410px;
+      margin-left: 0;
+      padding: 40px 60px 40px 32px;
+      border-radius: 0 12px 12px 0;
+      box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15);
+      clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-small {
+      display: inline-block;
+      background: linear-gradient(135deg, #061f4a, #0b3f86 62%, #d5a948);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .auth-card h1 {
+      font-size: 32px;
+      color: #1e40af;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .auth-card .subtitle {
+      font-size: 13px;
+      color: #6b7785;
+      margin-bottom: 22px;
+      line-height: 1.4;
+    }
+
+    /* ===== Form ===== */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #4a5560;
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid #d8dde2;
+      border-radius: 4px;
+      font-size: 13px;
+      outline: none;
+      background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input::placeholder {
+      color: #9aa4ad;
+    }
+
+    .form-group input:focus {
+      border-color: #0b3f86;
+      box-shadow: 0 0 0 3px rgba(11, 63, 134, 0.15);
+    }
+
+    /* ===== Buttons ===== */
+    .btn {
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #061f4a, #0b3f86 62%, #d5a948);
+      height: 30px;
+      padding: 0 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      color: #ffffff;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #031229, #061f4a 62%, #d5a948);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+    }
+
+    .btn-block {
+      width: 100%;
+      margin-top: 6px;
+    }
+
+    /* ===== Back Link ===== */
+    .link-back {
+      display: inline-block;
+      margin-top: auto;
+      padding-top: 20px;
+      padding-bottom: 2px;
+      font-size: 12px;
+      color: #1eb6b6;
+      text-decoration: none;
+    }
+
+    .link-back:hover {
+      text-decoration: underline;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .auth-page {
+        justify-content: center;
+        padding: 20px;
+        background-position: center;
+      }
+
+      .auth-card {
+        clip-path: none;
+        width: 100%;
+        height: 410px;
+        padding: 32px;
+        border-radius: 12px;
+        max-width: 400px;
+      }
+
+      .auth-page::before {
+        background: rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .auth-card {
+        padding: 24px;
+      }
+
+      .auth-card h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body class="login-page">
+  <!-- ═══ LAZY LOADER ═══ -->
+  <div id="loader">
+    <div class="loader-logo">
+      <img src="../assets/college-logo.png" alt="College Logo">
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="brand-small">Student Portal</div>
+      <h1>Welcome back</h1>
+      <p class="subtitle">Sign in with your roll number and password.</p>
+      <form id="student-login-form">
+        <div class="form-group">
+          <label for="roll">Roll Number</label>
+          <input type="text" id="roll" name="roll" placeholder="e.g. CSE22001" required autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Your password" required
+            autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Login</button>
+      </form>
+      <a class="link-back" href="../index.html">Back to home</a>
+    </div>
+  </div>
+
+  <script>
+    // Hide loader after page loads
+    window.addEventListener('load', function () {
+      const loader = document.getElementById('loader');
+      setTimeout(function () {
+        loader.classList.add('hidden');
+      }, 1000);
+    });
+  </script>
+  <script src="script.js"></script>
+</body>
+
+</html>

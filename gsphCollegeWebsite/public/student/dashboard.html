@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#061f4a" />
+    <title>Student Dashboard | GSPG College</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../mobile-responsive.css" />
+    <style>
+      /* ══════════ LAZY LOADING SCREEN ══════════ */
+      #loader {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle at center, rgba(213, 169, 72, 0.16), transparent 17rem),
+          linear-gradient(135deg, #031229 0%, #061f4a 56%, #0f172a 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 1rem;
+        z-index: 9999;
+        transition: opacity 0.55s ease, visibility 0.55s ease;
+      }
+
+      #loader.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .loader-logo {
+        width: 154px;
+        height: 154px;
+        position: relative;
+        display: grid;
+        place-items: center;
+        isolation: isolate;
+      }
+
+      .loader-logo::before,
+      .loader-logo::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+      }
+
+      .loader-logo::before {
+        border: 5px solid rgba(255, 255, 255, 0.14);
+        border-top-color: #d5a948;
+        border-right-color: #06b6d4;
+        animation: loaderRotate 0.85s linear infinite;
+      }
+
+      .loader-logo::after {
+        inset: 15px;
+        border: 2px solid rgba(255, 255, 255, 0.18);
+        border-bottom-color: #ffffff;
+        animation: loaderRotate 1.35s linear infinite reverse;
+      }
+
+      .loader-logo img {
+        width: 86px;
+        height: 86px;
+        object-fit: contain;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.94);
+        padding: 8px;
+        filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.45));
+        position: relative;
+        z-index: 1;
+        animation: loaderPulse 1.6s ease-in-out infinite;
+      }
+
+      .loader-text {
+        color: rgba(255, 255, 255, 0.86);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      @keyframes loaderRotate {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes loaderPulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.06);
+        }
+      }
+    </style>
+  </head>
+  <body data-page="student-dashboard">
+    <!-- ═══ LAZY LOADER ═══ -->
+    <div id="loader">
+      <div class="loader-logo">
+        <img src="../assets/college-logo.png" alt="GSPH Logo">
+      </div>
+      <div class="loader-text">Loading</div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <header class="app-header no-print">
+      <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Open menu">
+        ☰
+      </button>
+      <span class="logo">GSPG Student Portal</span>
+      <div class="header-actions">
+        <input
+          type="search"
+          class="search-input"
+          id="student-global-search"
+          placeholder="Search pages, subjects…"
+        />
+        <button type="button" class="btn btn-outline btn-sm" id="student-logout">
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="app-layout">
+      <aside class="sidebar no-print" id="sidebar">
+        <div class="sidebar-brand">
+          <img src="../assets/college-logo.png" alt="GSPG Logo" />
+          <div>
+            <strong>GSPG</strong>
+            <span>Student Workspace</span>
+          </div>
+        </div>
+        <nav id="student-nav">
+          <a href="#" data-section="home" class="active">🏠 Home</a>
+          <a href="#" data-section="profile">👤 Profile</a>
+          <a href="#" data-section="attendance">📊 Attendance</a>
+          <a href="#" data-section="marks">📝 Marks</a>
+          <a href="#" data-section="timetable">🗓️ Timetable</a>
+          <a href="#" data-section="assignments">📎 Assignments</a>
+          <a href="#" data-section="faculty">👨‍🏫 Faculty</a>
+          <a href="#" data-section="results">📜 Results</a>
+          <a href="#" data-section="notifications">🔔 Notifications</a>
+          <a href="#" data-section="contact">✉️ Contact</a>
+        </nav>
+      </aside>
+
+      <main class="main-content" id="student-main">
+        <!-- HOME -->
+        <section class="page-section" id="sec-home">
+          <h1 class="section-title">Dashboard</h1>
+          <div class="profile-hero" id="student-profile-hero"></div>
+          <div class="cards-grid" id="student-quick-stats"></div>
+          <div class="dash-columns">
+            <div class="panel">
+              <h3>Notifications</h3>
+              <ul class="notif-list" id="student-home-notifications"></ul>
+            </div>
+            <div class="panel">
+              <h3>Upcoming exams</h3>
+              <div id="student-home-exams"></div>
+            </div>
+          </div>
+          <div class="dash-columns" style="margin-top: 1rem">
+            <div class="panel">
+              <h3>Timetable (today)</h3>
+              <div id="student-home-timetable"></div>
+            </div>
+            <div class="panel">
+              <h3>Subjects this semester</h3>
+              <div id="student-home-subjects"></div>
+            </div>
+          </div>
+          <div class="dash-columns" style="margin-top: 1rem">
+            <div class="panel">
+              <h3>Library status</h3>
+              <div id="student-home-library"></div>
+            </div>
+            <div class="panel">
+              <h3>Hostel &amp; Bus</h3>
+              <div id="student-home-hostel-bus"></div>
+            </div>
+          </div>
+          <div class="panel" style="margin-top: 1rem">
+            <h3>Placement updates</h3>
+            <div id="student-home-placement"></div>
+          </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section class="page-section hidden" id="sec-profile">
+          <h1 class="section-title">Profile &amp; Security</h1>
+          <div class="panel">
+            <h3>Update profile</h3>
+            <form id="student-profile-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="pf-name">Full name</label>
+                  <input type="text" id="pf-name" required />
+                </div>
+                <div class="form-group">
+                  <label for="pf-email">Email</label>
+                  <input type="email" id="pf-email" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="pf-phone">Phone</label>
+                  <input type="tel" id="pf-phone" />
+                </div>
+                <div class="form-group">
+                  <label for="pf-photo">Photo URL</label>
+                  <input type="url" id="pf-photo" placeholder="https://..." />
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Save profile</button>
+            </form>
+          </div>
+          <div class="panel" style="margin-top: 1rem">
+            <h3>Change password</h3>
+            <form id="student-password-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="pf-old">Current password</label>
+                  <input type="password" id="pf-old" required />
+                </div>
+                <div class="form-group">
+                  <label for="pf-new">New password</label>
+                  <input type="password" id="pf-new" required minlength="4" />
+                </div>
+              </div>
+              <button type="submit" class="btn btn-accent">Update password</button>
+            </form>
+          </div>
+          <div class="panel no-print" style="margin-top: 1rem">
+            <h3>Hall ticket</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem">
+              Download a printable hall ticket for your next scheduled exam.
+            </p>
+            <button type="button" class="btn btn-outline" id="btn-hall-ticket">
+              Download hall ticket
+            </button>
+          </div>
+        </section>
+
+        <!-- ATTENDANCE -->
+        <section class="page-section hidden" id="sec-attendance">
+          <h1 class="section-title">Attendance</h1>
+          <div class="stat-card" style="max-width: 320px">
+            <div class="label">Overall attendance</div>
+            <div class="value" id="attendance-overall">—</div>
+          </div>
+          <div class="panel hidden" id="latest-attendance-approval" style="margin-top: 1rem"></div>
+
+          <!-- Attendance Calendar -->
+          <div class="panel" style="margin-top: 1.5rem">
+            <h3>Attendance Calendar</h3>
+            <div id="attendance-debug" class="attendance-debug"></div>
+            <div id="attendance-calendar" class="attendance-calendar"></div>
+          </div>
+
+          <div class="panel" style="margin-top: 1rem">
+            <div class="holiday-year-head">
+              <h3>2026 Festival Holidays</h3>
+              <span id="student-holiday-count" class="tag">0 holidays</span>
+            </div>
+            <div id="student-holiday-year-list" class="holiday-year-grid"></div>
+          </div>
+
+          <div class="table-wrap" style="margin-top: 1rem">
+            <table class="data-table" id="attendance-table">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Code</th>
+                  <th>Percentage</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- MARKS -->
+        <section class="page-section hidden" id="sec-marks">
+          <h1 class="section-title">Internal &amp; Semester marks</h1>
+          <div class="table-wrap">
+            <table class="data-table" id="marks-table">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Code</th>
+                  <th>Internal (30)</th>
+                  <th>Semester (70)</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- TIMETABLE -->
+        <section class="page-section hidden" id="sec-timetable">
+          <h1 class="section-title">Weekly timetable</h1>
+          <div class="table-wrap">
+            <table class="data-table" id="timetable-table">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Slot</th>
+                  <th>Subject</th>
+                  <th>Room</th>
+                  <th>Faculty</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ASSIGNMENTS -->
+        <section class="page-section hidden" id="sec-assignments">
+          <h1 class="section-title">Assignments</h1>
+          <div id="assignments-list"></div>
+        </section>
+
+        <!-- FACULTY -->
+        <section class="page-section hidden" id="sec-faculty">
+          <h1 class="section-title">Faculty details</h1>
+          <div class="faculty-grid" id="faculty-grid"></div>
+        </section>
+
+        <!-- RESULTS -->
+        <section class="page-section hidden" id="sec-results">
+          <h1 class="section-title">Results</h1>
+          <div class="table-wrap">
+            <table class="data-table" id="results-table">
+              <thead>
+                <tr>
+                  <th>Semester</th>
+                  <th>SGPA</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- NOTIFICATIONS -->
+        <section class="page-section hidden" id="sec-notifications">
+          <h1 class="section-title">All notifications</h1>
+          <ul class="notif-list" id="notifications-full"></ul>
+        </section>
+
+        <!-- CONTACT -->
+        <section class="page-section hidden" id="sec-contact">
+          <h1 class="section-title">Contact administration</h1>
+          <div class="panel">
+            <p><strong>Office:</strong> Academic Block, Room 101</p>
+            <p><strong>Phone:</strong> +91-80-1234-5678</p>
+            <p><strong>Email:</strong> academics@sxit.edu.in</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem">
+              For technical issues with this demo portal, contact your lab
+              coordinator.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Hall ticket modal -->
+    <div class="modal-backdrop" id="hall-modal">
+      <div class="modal print-area">
+        <div class="modal-header no-print">
+          <h3>Hall ticket preview</h3>
+          <button type="button" class="modal-close" id="hall-modal-close">&times;</button>
+        </div>
+        <div class="modal-body" id="hall-ticket-body"></div>
+        <div class="modal-body no-print">
+          <button type="button" class="btn btn-primary" id="hall-print">Print / Save PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Hide loader after page loads (including on refresh)
+      // But skip if coming from login (loader already shown)
+      window.addEventListener('load', function() {
+        const loader = document.getElementById('loader');
+        if (loader) {
+          // Check if we just logged in (within last 2 seconds)
+          const justLoggedIn = sessionStorage.getItem('justLoggedIn');
+          if (justLoggedIn) {
+            // Clear the flag and hide immediately
+            sessionStorage.removeItem('justLoggedIn');
+            loader.classList.add('hidden');
+          } else {
+            // Normal page load - show loader for 700ms
+            setTimeout(function() {
+              loader.classList.add('hidden');
+            }, 700);
+          }
+        }
+      });
+
+      // Show loader immediately on page unload (navigation/refresh)
+      window.addEventListener('beforeunload', function() {
+        const loader = document.getElementById('loader');
+        if (loader) {
+          loader.classList.remove('hidden');
+        }
+      });
+    </script>
+    <script src="script.js"></script>
+  </body>
+</html>
